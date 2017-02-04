@@ -1,0 +1,26 @@
+<resources>
+
+    <dimen name="default_micro">2dp</dimen>
+    <dimen name="default_smaller">5dp</dimen>
+    <dimen name="default_small">10dp</dimen>
+    <dimen name="default_normal">16dp</dimen>
+    <dimen name="default_larger">20dp</dimen>
+    <dimen name="default_large">30dp</dimen>
+    <dimen name="default_big">50dp</dimen>
+
+    <dimen name="default_divider">1px</dimen>
+
+    <dimen name="nav_header_vertical_spacing">160dp</dimen>
+    <dimen name="home_drawer_header_height">80dp</dimen>
+    <dimen name="home_header_image_height">200dp</dimen>
+
+    <dimen name="default_text_nano">8sp</dimen>
+    <dimen name="default_text_micro">10sp</dimen>
+    <dimen name="default_text_small">12sp</dimen>
+    <dimen name="default_text_smaller">14sp</dimen>
+    <dimen name="default_text_normal">15sp</dimen>
+    <dimen name="default_text_larger">18sp</dimen>
+    <dimen name="default_text_large">22sp</dimen>
+    <dimen name="default_text_big">26sp</dimen>
+    <dimen name="home_artist_image">100dp</dimen>
+</resources>

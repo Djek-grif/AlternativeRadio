@@ -1,0 +1,45 @@
+<resources>
+
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="Theme.AppCompat.DayNight.NoActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+    </style>
+
+    <style name="AppTheme.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
+    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+
+    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+
+    <style name="Widget.Text.Title" parent="TextAppearance.AppCompat.Medium">
+        <item name="android:textColor">@color/colorTextPrimary</item>
+        <item name="android:textSize">@dimen/default_text_larger</item>
+    </style>
+    <style name="Widget.Text.Title.Invert" parent="TextAppearance.AppCompat.Medium">
+        <item name="android:textColor">@color/colorTextPrimaryInvert</item>
+        <item name="android:textSize">@dimen/default_text_larger</item>
+    </style>
+    <style name="Widget.Text.SubTitle" parent="TextAppearance.AppCompat.Small">
+        <item name="android:textColor">@color/colorTextSecondary</item>
+        <item name="android:textSize">@dimen/default_text_smaller</item>
+    </style>
+    <style name="Widget.Text.SubTitle.Invert" parent="TextAppearance.AppCompat.Small">
+        <item name="android:textColor">@color/colorTextSecondaryInvert</item>
+        <item name="android:textSize">@dimen/default_text_smaller</item>
+    </style>
+    <style name="Widget.Text.Description" parent="TextAppearance.AppCompat.Small">
+        <item name="android:textColor">@color/colorTextPrimary</item>
+        <item name="android:textSize">@dimen/default_text_small</item>
+    </style>
+    <style name="Widget.Text.Micro" parent="TextAppearance.AppCompat.Small">
+        <item name="android:textColor">@color/colorTextPrimary</item>
+        <item name="android:textSize">@dimen/default_text_micro</item>
+    </style>
+
+</resources>

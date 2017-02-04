@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:context=".ui.activity.HomeActivity"
+    tools:showIn="@layout/fragment_home_content">
+
+    <RelativeLayout
+        android:id="@+id/image_content"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <ProgressBar
+            android:id="@+id/home_progress"
+            style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:minHeight="20dp"
+            android:indeterminate="true" />
+
+        <ImageView
+            android:id="@+id/home_header_image"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/home_header_image_height"
+            android:scaleType="centerCrop"
+            android:src="@drawable/home_image_thumbnail" />
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_alignBottom="@+id/home_header_image"
+            android:background="@drawable/text_shadow" />
+
+        <TextView
+            android:id="@+id/home_header_image_title"
+            style="@style/Widget.Text.Title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@+id/home_header_image"
+            android:layout_marginBottom="@dimen/default_smaller"
+            android:layout_marginLeft="@dimen/default_small"
+            android:layout_marginRight="@dimen/default_small"
+            android:ellipsize="end"
+            android:lines="1"
+            android:textStyle="bold"
+            tools:text="Description" />
+
+        <ImageView
+            android:id="@+id/home_artist_image"
+            android:layout_width="@dimen/home_artist_image"
+            android:layout_height="@dimen/home_artist_image"
+            android:layout_above="@+id/home_header_image_title"
+            android:layout_marginLeft="@dimen/default_small"
+            android:background="@android:color/white"
+            android:padding="@dimen/default_micro"
+            android:scaleType="centerCrop"
+            tools:src="@drawable/ic_service" />
+    </RelativeLayout>
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/home_recently"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/image_content"
+        android:background="@color/colorPrimary"
+        android:paddingBottom="@dimen/default_big"
+        android:paddingTop="@dimen/default_smaller" />
+</RelativeLayout>

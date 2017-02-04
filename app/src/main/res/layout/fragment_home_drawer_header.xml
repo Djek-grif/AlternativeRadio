@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/home_drawer_header_height"
+    android:background="@drawable/bg_home_drawer_header"
+    android:orientation="horizontal"
+    android:padding="@dimen/default_normal"
+    android:theme="@style/ThemeOverlay.AppCompat.Dark">
+
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="@dimen/default_big"
+        android:layout_height="@dimen/default_big"
+        android:layout_gravity="center_vertical"
+        app:srcCompat="@mipmap/ic_launcher" />
+
+    <TextView
+        android:id="@+id/home_drawer_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/default_normal"
+        android:layout_gravity="center_vertical"
+        android:text="@string/stations"
+        android:textAppearance="@style/Widget.Text.Title" />
+
+</LinearLayout>
