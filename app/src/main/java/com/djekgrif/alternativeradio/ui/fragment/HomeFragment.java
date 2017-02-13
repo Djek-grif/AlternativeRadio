@@ -72,7 +72,7 @@ public class HomeFragment extends BaseFragment implements HomeFragmentView {
 
 
     @Inject
-    HomeFragmentPresenter homeFragmentPresenter;
+    protected HomeFragmentPresenter homeFragmentPresenter;
 
     private RecentlyRecyclerViewAdapter recentlyListAdapter;
     private StationRecyclerViewAdapter stationListAdapter;
@@ -85,6 +85,7 @@ public class HomeFragment extends BaseFragment implements HomeFragmentView {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        injectComponent();
         setHasOptionsMenu(true);
         setMenuVisibility(false);
     }
@@ -129,7 +130,6 @@ public class HomeFragment extends BaseFragment implements HomeFragmentView {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        injectComponent();
         actionButton.setEnabled(false);
         actionButton.setOnClickListener(view -> homeFragmentPresenter.onClickActionButton());
         recentlyList.setLayoutManager(new LinearLayoutManager(getActivity()));

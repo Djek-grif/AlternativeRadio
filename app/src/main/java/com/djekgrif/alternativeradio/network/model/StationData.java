@@ -1,6 +1,7 @@
 package com.djekgrif.alternativeradio.network.model;
 
 import com.bignerdranch.expandablerecyclerview.model.Parent;
+import com.google.gson.annotations.SerializedName;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,7 +12,9 @@ import java.util.List;
 
 public class StationData implements Parent<Channel>{
 
+    @SerializedName("channels")
     private ArrayList<Channel> channels;
+    @SerializedName("name")
     private String name;
 
     public void setChannels(ArrayList<Channel> channels) {

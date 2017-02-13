@@ -75,6 +75,16 @@
     @butterknife.* <methods>;
 }
 
+# Models package (we have to keep it for firebase)
+-keepattributes Signature
+-keepclassmembers class com.djekgrif.alternativeradio.network.model.** {
+  *;
+}
+
+# Dagger2 ================================================
+-dontwarn okio.**
+-dontwarn retrofit2.Platform$Java8
+
 # Logs
 -assumenosideeffects class android.util.Log {
     public static *** d(...);

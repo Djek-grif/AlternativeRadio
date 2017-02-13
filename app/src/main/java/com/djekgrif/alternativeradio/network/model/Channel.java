@@ -1,5 +1,7 @@
 package com.djekgrif.alternativeradio.network.model;
 
+import com.google.gson.annotations.SerializedName;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -9,9 +11,13 @@ import java.util.List;
 
 public class Channel {
 
+    @SerializedName("streamUrls")
     private List<StreamData> streamUrls;
+    @SerializedName("songInfoUrl")
     private String songInfoUrl;
+    @SerializedName("recentlyInfoUrl")
     private String recentlyInfoUrl;
+    @SerializedName("name")
     private String name;
 
     public String getName() {

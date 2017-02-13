@@ -1,5 +1,7 @@
 package com.djekgrif.alternativeradio.network.model;
 
+import com.google.gson.annotations.SerializedName;
+
 import java.util.List;
 
 /**
@@ -8,7 +10,9 @@ import java.util.List;
 
 public class ConfigurationData {
 
+    @SerializedName("stations")
     private List<StationData> stations;
+    @SerializedName("searchMediaUrl")
     private String searchMediaUrl;
 
     public void setStations(List<StationData> stations) {
