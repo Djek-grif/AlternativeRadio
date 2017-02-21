@@ -4,11 +4,7 @@ import com.djekgrif.alternativeradio.network.ApiService;
 import com.djekgrif.alternativeradio.network.ApiServiceImp;
 import com.djekgrif.alternativeradio.network.RadioInfoService;
 import com.djekgrif.alternativeradio.network.SongInfoService;
-import com.djekgrif.alternativeradio.network.adapters.DateTimeTypeAdapter;
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-
-import org.joda.time.DateTime;
 
 import javax.inject.Singleton;
 
@@ -26,14 +22,6 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class ApiModule {
 
     public static final String USER_AGENT_DEFAULT = "User-Agent: Mozilla/5.0 (X11; Linux i686) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/46.0.2490.76 Safari/537.36";
-
-    @Provides
-    @Singleton
-    Gson provideGson() {
-        return new GsonBuilder()
-                .registerTypeAdapter(DateTime.class, new DateTimeTypeAdapter())
-                .create();
-    }
 
     @Provides
     @Singleton

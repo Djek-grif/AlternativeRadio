@@ -13,27 +13,25 @@ public class ConfigurationManager {
 
     private ApiService apiService;
     private ConfigurationData configurationData;
-    private Action1<ConfigurationData> configurationListener;
 
     public ConfigurationManager(ApiService apiService) {
         this.apiService = apiService;
-        initConfigurationData();
     }
 
-    private void initConfigurationData() {
-        apiService.getConfigurationData(configuration -> {
-            configurationData = configuration;
-            if (configurationListener != null) {
-                configurationListener.call(configurationData);
-            }
-        });
+    public ConfigurationData getConfigurationData() {
+        return configurationData;
     }
 
-    public void getConfigurationData(Action1<ConfigurationData> configurationListener) {
+    public void updateConfigurationData(Action1<ConfigurationData> configurationListener) {
         if(configurationData != null){
             configurationListener.call(configurationData);
         }else{
-            this.configurationListener = configurationListener;
+            apiService.getConfigurationData(configuration -> {
+                configurationData = configuration;
+                if (configurationListener != null) {
+                    configurationListener.call(configurationData);
+                }
+            });
         }
     }
 

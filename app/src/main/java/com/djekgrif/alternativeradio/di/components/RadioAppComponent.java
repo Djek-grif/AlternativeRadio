@@ -1,6 +1,7 @@
 package com.djekgrif.alternativeradio.di.components;
 
 import com.djekgrif.alternativeradio.App;
+import com.djekgrif.alternativeradio.common.StreamService;
 import com.djekgrif.alternativeradio.di.modules.ApiModule;
 import com.djekgrif.alternativeradio.di.modules.DataModule;
 import com.djekgrif.alternativeradio.di.modules.NetworkModule;
@@ -25,6 +26,7 @@ import dagger.Component;
 )
 public interface RadioAppComponent {
     void inject(App app);
+    void inject(StreamService streamService);
     ImageLoader imageLoader();
     ApiService apiService();
     ConfigurationManager configurationManager();

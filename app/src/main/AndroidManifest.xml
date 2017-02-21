@@ -24,7 +24,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <service android:name=".common.StreamService" android:icon="@drawable/ic_service">
+        <service android:name=".common.StreamService">
             <intent-filter>
                 <action android:name="android.intent.action.MEDIA_BUTTON" />
                 <action android:name="android.media.AUDIO_BECOMING_NOISY" />

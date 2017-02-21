@@ -117,6 +117,18 @@ public class HomeFragment extends BaseFragment implements HomeFragmentView {
     }
 
     @Override
+    public void onStart() {
+        super.onStart();
+        homeFragmentPresenter.onStart();
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        homeFragmentPresenter.onStop();
+    }
+
+    @Override
     public boolean onBackPressed() {
         return homeFragmentPresenter.onBackPressed();
     }
@@ -198,7 +210,7 @@ public class HomeFragment extends BaseFragment implements HomeFragmentView {
 
     @Override
     public void updateImage(ImageLoader imageLoader, String imageUrl) {
-        imageLoader.loadDefault(imageUrl, artistImage);
+        imageLoader.loadDefault(imageUrl, artistImage, R.drawable.home_image_thumbnail);
         imageLoader.loadDefault(imageUrl, headerImage);
     }
 

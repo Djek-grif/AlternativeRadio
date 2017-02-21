@@ -14,6 +14,7 @@ import android.support.v7.app.NotificationCompat;
 
 import com.djekgrif.alternativeradio.App;
 import com.djekgrif.alternativeradio.R;
+import com.djekgrif.alternativeradio.ui.utils.DimensUtils;
 import com.djekgrif.alternativeradio.utils.DeviceUtils;
 
 import timber.log.Timber;
@@ -24,21 +25,32 @@ import timber.log.Timber;
 
 public class NotificationManager {
 
-    public static void initMediaSessionMetadata(MediaSessionCompat mediaSessionCompat, String title, String description) {
-        Resources resources = App.getInstance().getResources();
+    public static void initMediaSessionMetadata(MediaSessionCompat mediaSessionCompat){
         MediaMetadataCompat.Builder metadataBuilder = new MediaMetadataCompat.Builder();
-        //Notification icon in card
-        metadataBuilder.putBitmap(MediaMetadataCompat.METADATA_KEY_DISPLAY_ICON, BitmapFactory.decodeResource(resources, R.mipmap.ic_launcher));
-        metadataBuilder.putBitmap(MediaMetadataCompat.METADATA_KEY_ALBUM_ART, BitmapFactory.decodeResource(resources, R.mipmap.ic_launcher));
-
-        //lock screen icon for pre lollipop
-        metadataBuilder.putBitmap(MediaMetadataCompat.METADATA_KEY_ART, BitmapFactory.decodeResource(resources, R.mipmap.ic_launcher));
-        metadataBuilder.putString(MediaMetadataCompat.METADATA_KEY_DISPLAY_TITLE, title);
-        metadataBuilder.putString(MediaMetadataCompat.METADATA_KEY_DISPLAY_SUBTITLE, description);
         metadataBuilder.putLong(MediaMetadataCompat.METADATA_KEY_TRACK_NUMBER, 1);
         metadataBuilder.putLong(MediaMetadataCompat.METADATA_KEY_NUM_TRACKS, 1);
-
         mediaSessionCompat.setMetadata(metadataBuilder.build());
+    }
+
+    public static void updateMediaSessionMetadata(MediaSessionCompat mediaSessionCompat, String title, String description, String imageUrl, ImageLoader imageLoader) {
+        Resources resources = App.getInstance().getResources();
+        MediaMetadataCompat.Builder metadataBuilder = new MediaMetadataCompat.Builder();
+
+        metadataBuilder.putString(MediaMetadataCompat.METADATA_KEY_DISPLAY_TITLE, title);
+        metadataBuilder.putString(MediaMetadataCompat.METADATA_KEY_DISPLAY_SUBTITLE, description);
+        mediaSessionCompat.setMetadata(metadataBuilder.build());
+
+        imageLoader.loadBitmap(imageUrl, DimensUtils.dpToPx(R.dimen.default_large), DimensUtils.dpToPx(R.dimen.default_large),  bitmap -> {
+            bitmap = bitmap == null ? BitmapFactory.decodeResource(resources, R.mipmap.ic_launcher) : bitmap;
+            //Notification icon in card
+            metadataBuilder.putBitmap(MediaMetadataCompat.METADATA_KEY_DISPLAY_ICON, bitmap);
+            metadataBuilder.putBitmap(MediaMetadataCompat.METADATA_KEY_ALBUM_ART, bitmap);
+            //lock screen icon for pre lollipop
+            metadataBuilder.putBitmap(MediaMetadataCompat.METADATA_KEY_ART, bitmap);
+
+            mediaSessionCompat.setMetadata(metadataBuilder.build());
+
+        });
     }
 
     public static void showPlayingNotification(MediaSessionCompat mediaSessionCompat) {
@@ -86,6 +98,7 @@ public class NotificationManager {
                 .setContentIntent(controller.getSessionActivity())
                 .setDeleteIntent(MediaButtonReceiver.buildMediaButtonPendingIntent(context, PlaybackStateCompat.ACTION_STOP))
                 .setVisibility(NotificationCompat.VISIBILITY_PUBLIC);
+
         return builder;
     }
 }

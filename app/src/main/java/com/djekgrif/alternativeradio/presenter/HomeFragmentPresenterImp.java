@@ -1,11 +1,14 @@
 package com.djekgrif.alternativeradio.presenter;
 
+import android.content.BroadcastReceiver;
 import android.content.ComponentName;
-import android.net.Uri;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
-import android.os.Handler;
 import android.os.RemoteException;
 import android.support.annotation.Nullable;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.media.MediaBrowserCompat;
 import android.support.v4.media.session.MediaControllerCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
@@ -15,20 +18,15 @@ import android.view.MenuItem;
 
 import com.djekgrif.alternativeradio.R;
 import com.djekgrif.alternativeradio.common.StreamService;
-import com.djekgrif.alternativeradio.manager.ConfigurationManager;
 import com.djekgrif.alternativeradio.manager.ImageLoader;
-import com.djekgrif.alternativeradio.network.ApiService;
-import com.djekgrif.alternativeradio.network.SimpleSubscriber;
 import com.djekgrif.alternativeradio.network.model.Channel;
-import com.djekgrif.alternativeradio.network.model.RecentlyItem;
 import com.djekgrif.alternativeradio.network.model.SongInfoDetails;
-import com.djekgrif.alternativeradio.network.model.StreamData;
 import com.djekgrif.alternativeradio.ui.adapters.ItemSelectListener;
 import com.djekgrif.alternativeradio.ui.utils.BundleKeys;
 import com.djekgrif.alternativeradio.ui.utils.ToastUlils;
+import com.djekgrif.alternativeradio.utils.IntentUtils;
 import com.djekgrif.alternativeradio.view.HomeFragmentView;
 
-import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import rx.Observable;
@@ -41,32 +39,53 @@ public class HomeFragmentPresenterImp implements HomeFragmentPresenter {
 
     private static final int DELAY_TO_EXIT = 1000 * 3;
 
-    private ApiService apiService;
     private MediaBrowserCompat mediaBrowserCompat;
-    private ConfigurationManager configurationManager;
-
     private MediaControllerCompat mediaControllerCompat;
     private ImageLoader imageLoader;
     private boolean onBackPressedFlag;
     private HomeFragmentView homeFragmentView;
-    private String searchMediaUrl;
-    private Channel currentChannel;
-    private StreamData currentStreamData;
-    private Handler infoUpdaterHandler = new Handler();
-    private Runnable updateInfoRunnable = new Runnable() {
+
+    private BroadcastReceiver actionsBroadcastReceiver = new BroadcastReceiver() {
         @Override
-        public void run() {
-            updateSoundInfo();
-            infoUpdaterHandler.postDelayed(updateInfoRunnable, 1000 * 20);
+        public void onReceive(Context context, Intent intent) {
+            if (intent != null) {
+                switch (intent.getAction()) {
+                    case IntentUtils.UPDATE_SONG_INFO_DETAILS:
+                        SongInfoDetails songInfoDetails = intent.getExtras().getParcelable(BundleKeys.SONG_INFO_DETAILS);
+                        StringBuilder songInfoString = new StringBuilder();
+                        if (!TextUtils.isEmpty(songInfoDetails.getArtistName())) {
+                            songInfoString.append(songInfoDetails.getArtistName());
+                        }
+                        if (!TextUtils.isEmpty(songInfoDetails.getTrackName())) {
+                            songInfoString.append(" - ");
+                            songInfoString.append(songInfoDetails.getTrackName());
+                        }
+                        homeFragmentView.updateSoundInfo(songInfoString.toString());
+                        homeFragmentView.updateImage(imageLoader, songInfoDetails.getArtworkUrl100());
+                        break;
+                    case IntentUtils.UPDATE_STATIONS_STATE:
+                        homeFragmentView.updateStationList(intent.getParcelableArrayListExtra(BundleKeys.STATION_LIST));
+                        homeFragmentView.setUpUI();
+                        break;
+                    case IntentUtils.UPDATE_RECENTLY_LIST:
+                        homeFragmentView.updateRecentlyList(intent.getParcelableArrayListExtra(BundleKeys.RECENTLY_LIST));
+                        break;
+                    case IntentUtils.START_PLAY:
+                        homeFragmentView.updateActionButton(PlaybackStateCompat.STATE_PLAYING);
+                        break;
+                    case IntentUtils.STOP_PLAY:
+                        homeFragmentView.updateActionButton(PlaybackStateCompat.STATE_STOPPED);
+                        break;
+                }
+
+            }
         }
     };
 
-    public HomeFragmentPresenterImp(HomeFragmentView homeFragmentView,
-                                    ApiService apiService, ImageLoader imageLoader, ConfigurationManager configurationManager) {
+    public HomeFragmentPresenterImp(HomeFragmentView homeFragmentView, ImageLoader imageLoader) {
         this.homeFragmentView = homeFragmentView;
-        this.apiService = apiService;
         this.imageLoader = imageLoader;
-        this.configurationManager = configurationManager;
+//        this.configurationManager = configurationManager;
         this.mediaBrowserCompat = new MediaBrowserCompat(homeFragmentView.getContext(), new ComponentName(homeFragmentView.getContext(), StreamService.class),
                 new MediaBrowserCompat.ConnectionCallback() {
 
@@ -106,19 +125,17 @@ public class HomeFragmentPresenterImp implements HomeFragmentPresenter {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         this.mediaBrowserCompat.connect();
-        configurationManager.getConfigurationData(configurationData -> {
-            Channel channel = configurationData.getStations().get(0).getChannels().get(0);
-            StreamData streamData = channel.getStreamUrls().get(channel.getStreamUrls().size() > 1 ? 1 : 0);
-            updateCurrentStation(channel, streamData);
-            searchMediaUrl = configurationData.getSearchMediaUrl();
-            homeFragmentView.updateStationList(configurationData.getStations());
-            homeFragmentView.setUpUI();
-        });
+//        configurationManager.updateConfigurationData(configurationData -> {
+//            Channel channel = configurationData.getStations().get(0).getChannels().get(0);
+//            StreamData streamData = channel.getStreamUrls().get(channel.getStreamUrls().size() > 1 ? 1 : 0);
+//            updateCurrentChannel(channel, streamData);
+//            searchMediaUrl = configurationData.getSearchMediaUrl();
+//            homeFragmentView.setUpUI();
+//        });
     }
 
     @Override
     public void onPause() {
-        stopSoundInfoUpdater();
     }
 
     @Override
@@ -126,103 +143,66 @@ public class HomeFragmentPresenterImp implements HomeFragmentPresenter {
     }
 
     @Override
+    public void onStart() {
+        LocalBroadcastManager localBroadcastManager = LocalBroadcastManager.getInstance(homeFragmentView.getContext());
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(IntentUtils.START_PLAY);
+        intentFilter.addAction(IntentUtils.STOP_PLAY);
+        intentFilter.addAction(IntentUtils.UPDATE_SONG_INFO_DETAILS);
+        intentFilter.addAction(IntentUtils.UPDATE_PROGRESS_STATE);
+        intentFilter.addAction(IntentUtils.UPDATE_STATIONS_STATE);
+        intentFilter.addAction(IntentUtils.UPDATE_RECENTLY_LIST);
+        localBroadcastManager.registerReceiver(actionsBroadcastReceiver, intentFilter);
+    }
+
+    @Override
+    public void onStop() {
+        LocalBroadcastManager.getInstance(homeFragmentView.getContext()).unregisterReceiver(actionsBroadcastReceiver);
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem menuItem) {
-        currentStreamData = currentChannel.getStreamUrls().get(menuItem.getItemId());
-        changeStream();
+//        changeStream();
         return true;
     }
 
     @Override
     public void onPrepareOptionsMenu(Menu menu) {
         menu.clear();
-        if (currentChannel != null) {
-            for (int i = 0; i < currentChannel.getStreamUrls().size(); i++) {
-                int key = currentChannel.getStreamUrls().get(i).getQuality();
-                menu.add(0, i, Menu.NONE, String.format(homeFragmentView.getContext().getString(R.string.kbs), String.valueOf(key)));
-            }
-        }
+//        if (currentChannel != null) {
+//            for (int i = 0; i < currentChannel.getStreamUrls().size(); i++) {
+//                int key = currentChannel.getStreamUrls().get(i).getQuality();
+//                menu.add(0, i, Menu.NONE, String.format(homeFragmentView.getContext().getString(R.string.kbs), String.valueOf(key)));
+//            }
+//        }
     }
 
-    private void startSoundInfoUpdater() {
-        infoUpdaterHandler.removeCallbacks(updateInfoRunnable);
-        infoUpdaterHandler.post(updateInfoRunnable);
-    }
-
-    private void stopSoundInfoUpdater() {
-        infoUpdaterHandler.removeCallbacks(updateInfoRunnable);
-    }
-
-    private void updateSoundInfo() {
-        apiService.getCurrentSoundInfo(currentChannel.getSongInfoUrl(), searchMediaUrl, new SimpleSubscriber<SongInfoDetails>() {
-            @Override
-            public void onNext(SongInfoDetails soundInfoResponse) {
-                if (soundInfoResponse != null) {
-                    StringBuilder songInfoString = new StringBuilder();
-                    if (!TextUtils.isEmpty(soundInfoResponse.getArtistName())) {
-                        songInfoString.append(soundInfoResponse.getArtistName());
-                    }
-                    if (!TextUtils.isEmpty(soundInfoResponse.getTrackName())) {
-                        songInfoString.append(" - ");
-                        songInfoString.append(soundInfoResponse.getTrackName());
-                    }
-                    homeFragmentView.updateSoundInfo(songInfoString.toString());
-                    homeFragmentView.updateImage(imageLoader, soundInfoResponse.getArtworkUrl100());
-                    if (homeFragmentView.getSupportMediaController() != null) {
-                        Bundle bundle = new Bundle();
-                        bundle.putString(BundleKeys.ARTIST_NAME, soundInfoResponse.getArtistName());
-                        bundle.putString(BundleKeys.SONG_INFO_DETAILS, soundInfoResponse.getTrackName());
-                        homeFragmentView.getSupportMediaController().getTransportControls().sendCustomAction(StreamService.CUSTOM_UPDATE_NOTIFICATION_DATA_ACTION, bundle);
-                    }
-                }
-            }
-        });
-        apiService.getRecentlyList(currentChannel.getRecentlyInfoUrl(), new SimpleSubscriber<List<RecentlyItem>>() {
-            @Override
-            public void onNext(List<RecentlyItem> recentlyItems) {
-                homeFragmentView.updateRecentlyList(recentlyItems);
-            }
-        });
-    }
-
-    private void updateCurrentStation(Channel channel, StreamData streamData) {
-        currentChannel = channel;
-        currentStreamData = streamData;
-        startSoundInfoUpdater();
-        homeFragmentView.invalidateOptionsMenu();
-    }
-
-    private void changeStream(){
-        homeFragmentView.getSupportMediaController().getTransportControls().stop();
-        homeFragmentView.updateActionButton(PlaybackStateCompat.STATE_STOPPED);
-        Uri linkUri = Uri.parse(currentStreamData.getUrl());
-        homeFragmentView.getSupportMediaController().getTransportControls().playFromUri(linkUri, null);
-        Timber.d("Changing stream to: %s", linkUri.toString());
-        homeFragmentView.getSupportMediaController().getTransportControls().play();
-        homeFragmentView.updateActionButton(PlaybackStateCompat.STATE_PLAYING);
-    }
 
     @Override
     public ItemSelectListener<Channel> getChannelItemListener() {
-        return (view, dataItem) -> {
-            updateCurrentStation(dataItem, dataItem.getStreamUrls().get(dataItem.getStreamUrls().size() > 1 ? 1 : 0));
-            changeStream();
+        return (view, channel) -> {
+            Bundle bundle = new Bundle();
+            bundle.putParcelable(BundleKeys.CHANNEL, channel);
+            homeFragmentView.getSupportMediaController().getTransportControls().sendCustomAction(StreamService.CUSTOM_STREAM_CHANGED, bundle);
+            homeFragmentView.invalidateOptionsMenu();
         };
     }
 
     @Override
     public void onClickActionButton() {
-        if (homeFragmentView.getSupportMediaController().getPlaybackState() != null &&
-                homeFragmentView.getSupportMediaController().getPlaybackState().getState() == PlaybackStateCompat.STATE_PLAYING) {
-            Timber.d("Changing state to pause");
-            homeFragmentView.getSupportMediaController().getTransportControls().stop();
-            homeFragmentView.updateActionButton(PlaybackStateCompat.STATE_STOPPED);
-        } else {
-            Uri linkUri = Uri.parse(currentStreamData.getUrl());
-            homeFragmentView.getSupportMediaController().getTransportControls().playFromUri(linkUri, null);
-            Timber.d("Changing state to play with resource: %s", linkUri.toString());
-            homeFragmentView.getSupportMediaController().getTransportControls().play();
-            homeFragmentView.updateActionButton(PlaybackStateCompat.STATE_PLAYING);
-        }
+        homeFragmentView.getSupportMediaController().getTransportControls().sendCustomAction(StreamService.CUSTOM_CHANGE_STREAM_STATE, null);
+//        if (homeFragmentView.getSupportMediaController().getPlaybackState() != null &&
+//                homeFragmentView.getSupportMediaController().getPlaybackState().getState() == PlaybackStateCompat.STATE_PLAYING) {
+//            Timber.d("Changing state to pause");
+//            homeFragmentView.getSupportMediaController().getTransportControls().stop();
+//            homeFragmentView.updateActionButton(PlaybackStateCompat.STATE_STOPPED);
+//        } else {
+//            Uri linkUri = Uri.parse(currentStreamData.getUrl());
+//            homeFragmentView.getSupportMediaController().getTransportControls().playFromUri(linkUri, null);
+//            Timber.d("Changing state to play with resource: %s", linkUri.toString());
+//            homeFragmentView.getSupportMediaController().getTransportControls().play();
+//            homeFragmentView.updateActionButton(PlaybackStateCompat.STATE_PLAYING);
+//        }
     }
 
     @Override
@@ -253,6 +233,5 @@ public class HomeFragmentPresenterImp implements HomeFragmentPresenter {
 //            homeFragmentView.getSupportMediaController().getTransportControls().pause();
 //        }
         mediaBrowserCompat.disconnect();
-        stopSoundInfoUpdater();
     }
 }

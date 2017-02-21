@@ -4,6 +4,7 @@ import android.app.Application;
 
 import com.djekgrif.alternativeradio.di.components.DaggerRadioAppComponent;
 import com.djekgrif.alternativeradio.di.components.RadioAppComponent;
+import com.djekgrif.alternativeradio.di.modules.RadioAppModule;
 
 import net.danlew.android.joda.JodaTimeAndroid;
 
@@ -38,7 +39,10 @@ public class App extends Application {
     }
 
     private void buildGraphAndInject() {
-        appComponent = DaggerRadioAppComponent.builder().build();
+        appComponent = DaggerRadioAppComponent
+                .builder()
+                .radioAppModule(new RadioAppModule(this))
+                .build();
         appComponent.inject(this);
     }
 
