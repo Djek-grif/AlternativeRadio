@@ -25,8 +25,6 @@ import android.widget.TextView;
 
 import com.djekgrif.alternativeradio.App;
 import com.djekgrif.alternativeradio.R;
-import com.djekgrif.alternativeradio.di.components.DaggerHomeViewComponent;
-import com.djekgrif.alternativeradio.di.components.HomeViewComponent;
 import com.djekgrif.alternativeradio.di.modules.HomeFragmentModule;
 import com.djekgrif.alternativeradio.manager.ImageLoader;
 import com.djekgrif.alternativeradio.network.model.RecentlyItem;
@@ -105,18 +103,6 @@ public class HomeFragment extends BaseFragment implements HomeFragmentView {
     }
 
     @Override
-    public void onPause() {
-        super.onPause();
-        homeFragmentPresenter.onPause();
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        homeFragmentPresenter.onResume();
-    }
-
-    @Override
     public void onStart() {
         super.onStart();
         homeFragmentPresenter.onStart();
@@ -180,11 +166,7 @@ public class HomeFragment extends BaseFragment implements HomeFragmentView {
     }
 
     protected void injectComponent() {
-        HomeViewComponent homeViewComponent = DaggerHomeViewComponent.builder()
-                .radioAppComponent(App.getInstance().getAppComponent())
-                .homeFragmentModule(new HomeFragmentModule(this))
-                .build();
-        homeViewComponent.inject(this);
+        App.getInstance().getAppComponent().plus(new HomeFragmentModule(this)).inject(this);
     }
 
     @Override

@@ -4,11 +4,9 @@ import com.djekgrif.alternativeradio.App;
 import com.djekgrif.alternativeradio.common.StreamService;
 import com.djekgrif.alternativeradio.di.modules.ApiModule;
 import com.djekgrif.alternativeradio.di.modules.DataModule;
+import com.djekgrif.alternativeradio.di.modules.HomeFragmentModule;
 import com.djekgrif.alternativeradio.di.modules.NetworkModule;
 import com.djekgrif.alternativeradio.di.modules.RadioAppModule;
-import com.djekgrif.alternativeradio.manager.ConfigurationManager;
-import com.djekgrif.alternativeradio.manager.ImageLoader;
-import com.djekgrif.alternativeradio.network.ApiService;
 
 import javax.inject.Singleton;
 
@@ -27,7 +25,10 @@ import dagger.Component;
 public interface RadioAppComponent {
     void inject(App app);
     void inject(StreamService streamService);
-    ImageLoader imageLoader();
-    ApiService apiService();
-    ConfigurationManager configurationManager();
+
+    HomeViewComponent plus(HomeFragmentModule module);
+
+//    ImageLoader imageLoader();
+//    ApiService apiService();
+//    ConfigurationManager configurationManager();
 }

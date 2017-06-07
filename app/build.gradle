@@ -1,6 +1,6 @@
 def versionMajor = 0
 def versionMinor = 1
-def versionPatch = 1
+def versionPatch = 2
 
 apply plugin: 'com.android.application'
 apply plugin: 'com.neenbedankt.android-apt'
@@ -75,6 +75,7 @@ android {
         exclude 'META-INF/services/javax.annotation.processing.Processor'
         exclude 'LICENSE.txt'
     }
+    buildToolsVersion '25.0.0'
 }
 
 dependencies {
@@ -107,6 +108,7 @@ dependencies {
 
     compile 'com.google.firebase:firebase-crash:10.0.1'
     compile 'com.google.firebase:firebase-database:10.0.1'
+    compile 'org.greenrobot:eventbus:3.0.0'
 
 
     // Force usage of support annotations in the test app, since it is internally used by the runner module.

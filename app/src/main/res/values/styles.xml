@@ -6,6 +6,7 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:progressBarStyleHorizontal">@style/Widget.ProgressIndetermHorizontal</item>
     </style>
 
     <style name="AppTheme.NoActionBar">
@@ -40,6 +41,10 @@
     <style name="Widget.Text.Micro" parent="TextAppearance.AppCompat.Small">
         <item name="android:textColor">@color/colorTextPrimary</item>
         <item name="android:textSize">@dimen/default_text_micro</item>
+    </style>
+    <style name="Widget.ProgressIndetermHorizontal" parent="android:Widget.Holo.ProgressBar.Horizontal">
+        <item name="android:progressDrawable">@drawable/progress_horizontal_holo_dark</item>
+        <item name="android:indeterminateDrawable">@drawable/progress_indeterminate_horizontal_holo_dark</item>
     </style>
 
 </resources>

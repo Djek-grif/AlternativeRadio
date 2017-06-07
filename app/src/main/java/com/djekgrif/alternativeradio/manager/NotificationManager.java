@@ -1,6 +1,8 @@
 package com.djekgrif.alternativeradio.manager;
 
+import android.app.PendingIntent;
 import android.content.Context;
+import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.BitmapFactory;
 import android.support.v4.app.NotificationManagerCompat;
@@ -14,16 +16,18 @@ import android.support.v7.app.NotificationCompat;
 
 import com.djekgrif.alternativeradio.App;
 import com.djekgrif.alternativeradio.R;
+import com.djekgrif.alternativeradio.common.StreamService;
+import com.djekgrif.alternativeradio.ui.activity.HomeActivity;
 import com.djekgrif.alternativeradio.ui.utils.DimensUtils;
 import com.djekgrif.alternativeradio.utils.DeviceUtils;
-
-import timber.log.Timber;
 
 /**
  * Created by djek-grif on 11/15/16.
  */
 
 public class NotificationManager {
+
+    private static final int NOTIFICATION_ID = 232451;
 
     public static void initMediaSessionMetadata(MediaSessionCompat mediaSessionCompat){
         MediaMetadataCompat.Builder metadataBuilder = new MediaMetadataCompat.Builder();
@@ -40,7 +44,7 @@ public class NotificationManager {
         metadataBuilder.putString(MediaMetadataCompat.METADATA_KEY_DISPLAY_SUBTITLE, description);
         mediaSessionCompat.setMetadata(metadataBuilder.build());
 
-        imageLoader.loadBitmap(imageUrl, DimensUtils.dpToPx(R.dimen.default_large), DimensUtils.dpToPx(R.dimen.default_large),  bitmap -> {
+        imageLoader.loadBitmap(imageUrl, DimensUtils.dpToPx(R.dimen.default_large), DimensUtils.dpToPx(R.dimen.default_large), bitmap -> {
             bitmap = bitmap == null ? BitmapFactory.decodeResource(resources, R.mipmap.ic_launcher) : bitmap;
             //Notification icon in card
             metadataBuilder.putBitmap(MediaMetadataCompat.METADATA_KEY_DISPLAY_ICON, bitmap);
@@ -55,16 +59,12 @@ public class NotificationManager {
 
     public static void showPlayingNotification(MediaSessionCompat mediaSessionCompat) {
         NotificationCompat.Builder builder = getBuilder(App.getInstance(), mediaSessionCompat);
-        if (builder != null) {
             builder.addAction(new NotificationCompat.Action(android.R.drawable.ic_media_pause,
                     App.getInstance().getString(R.string.pause),
                     MediaButtonReceiver.buildMediaButtonPendingIntent(App.getInstance(), PlaybackStateCompat.ACTION_STOP)));
             builder.setStyle(new NotificationCompat.MediaStyle().setShowActionsInCompactView(0).setMediaSession(mediaSessionCompat.getSessionToken()));
             builder.setSmallIcon(DeviceUtils.isLollipopOrHigher() ? R.drawable.ic_service_transparent : R.drawable.ic_service);
-            NotificationManagerCompat.from(App.getInstance()).notify(1, builder.build());
-        }else{
-            Timber.e("Notification builder is NULL");
-        }
+            NotificationManagerCompat.from(App.getInstance()).notify(NOTIFICATION_ID, builder.build());
     }
 
     public static void showStopNotification(MediaSessionCompat mediaSessionCompat) {
@@ -75,11 +75,11 @@ public class NotificationManager {
                     MediaButtonReceiver.buildMediaButtonPendingIntent(App.getInstance(), PlaybackStateCompat.ACTION_PLAY)));
             builder.setStyle(new NotificationCompat.MediaStyle().setShowActionsInCompactView(0).setMediaSession(mediaSessionCompat.getSessionToken()));
             builder.setSmallIcon(DeviceUtils.isLollipopOrHigher() ? R.drawable.ic_service_transparent : R.drawable.ic_service);
-            NotificationManagerCompat.from(App.getInstance()).notify(1, builder.build());
+            NotificationManagerCompat.from(App.getInstance()).notify(NOTIFICATION_ID, builder.build());
         }
     }
 
-    public static void removeNotifications(){
+    public static void removeNotifications() {
         NotificationManagerCompat.from(App.getInstance()).cancelAll();
     }
 
@@ -88,6 +88,16 @@ public class NotificationManager {
         MediaMetadataCompat mediaMetadata = controller.getMetadata();
         MediaDescriptionCompat description = mediaMetadata.getDescription();
 
+        Intent deleteIntent = new Intent(context, StreamService.class);
+        deleteIntent.setAction(StreamService.CUSTOM_EXIT_ACTION);
+        PendingIntent stopApp = PendingIntent.getService(context, 0, deleteIntent, PendingIntent.FLAG_CANCEL_CURRENT);
+
+
+        Intent openUI = new Intent(context, HomeActivity.class);
+        openUI.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+//        openUI.putExtra(MusicPlayerActivity.EXTRA_CURRENT_MEDIA_DESCRIPTION, mediaSession);
+        PendingIntent openUIPendingIntent = PendingIntent.getActivity(context, 100, openUI, PendingIntent.FLAG_CANCEL_CURRENT);
+
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context);
         builder
                 .setShowWhen(false)
@@ -95,8 +105,8 @@ public class NotificationManager {
                 .setContentText(description.getSubtitle())
                 .setSubText(description.getDescription())
                 .setLargeIcon(description.getIconBitmap())
-                .setContentIntent(controller.getSessionActivity())
-                .setDeleteIntent(MediaButtonReceiver.buildMediaButtonPendingIntent(context, PlaybackStateCompat.ACTION_STOP))
+                .setContentIntent(openUIPendingIntent)
+                .setDeleteIntent(stopApp)
                 .setVisibility(NotificationCompat.VISIBILITY_PUBLIC);
 
         return builder;

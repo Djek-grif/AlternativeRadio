@@ -32,6 +32,10 @@ public class StreamDataUpdater {
     private String searchMediaUrl;
     private StreamData currentStreamData;
 
+    public void setUpdateSoundInfoListener(StreamDataUpdaterListener updateSoundInfoListener) {
+        this.updateSoundInfoListener = updateSoundInfoListener;
+    }
+
     public Channel getCurrentChannel() {
         return currentChannel;
     }
@@ -56,11 +60,13 @@ public class StreamDataUpdater {
         return Uri.parse(currentStreamData.getUrl());
     }
 
-    public StreamDataUpdater(StreamDataUpdaterListener updateSoundInfoListener, ApiService apiService, ConfigurationManager configurationManager, Preferences preferences) {
+    public StreamDataUpdater(ApiService apiService, ConfigurationManager configurationManager, Preferences preferences) {
         this.apiService = apiService;
         this.configurationManager = configurationManager;
         this.preferences = preferences;
-        this.updateSoundInfoListener = updateSoundInfoListener;
+    }
+
+    public void updateConfigurationData(){
         configurationManager.updateConfigurationData(configurationData -> {
             LastAppState lastAppState = preferences.getLastAppState();
             if (lastAppState != null && configurationData.getStations().contains(lastAppState.getStationData())) {
@@ -105,18 +111,12 @@ public class StreamDataUpdater {
         infoUpdaterHandler.removeCallbacks(updateInfoRunnable);
     }
 
-    private void updateSoundInfo() {
+    public void updateSoundInfo() {
         apiService.getCurrentSoundInfo(currentChannel.getSongInfoUrl(), searchMediaUrl, new SimpleSubscriber<SongInfoDetails>() {
             @Override
             public void onNext(SongInfoDetails soundInfoResponse) {
                 if (soundInfoResponse != null) {
                     updateSoundInfoListener.updateData(soundInfoResponse);
-//                    if (homeFragmentView.getSupportMediaController() != null) {
-//                        Bundle bundle = new Bundle();
-//                        bundle.putString(BundleKeys.ARTIST_NAME, soundInfoResponse.getArtistName());
-//                        bundle.putString(BundleKeys.SONG_INFO_DETAILS, soundInfoResponse.getTrackName());
-//                        homeFragmentView.getSupportMediaController().getTransportControls().sendCustomAction(StreamService.CUSTOM_UPDATE_NOTIFICATION_DATA_ACTION, bundle);
-//                    }
                 }
             }
         });

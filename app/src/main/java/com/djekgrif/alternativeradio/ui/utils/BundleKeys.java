@@ -10,5 +10,5 @@ public class BundleKeys {
     public static final String RECENTLY_LIST = "recently_list";
     public static final String STATION_LIST = "station_list";
     public static final String ARTIST_NAME = "artist_name";
-    public static final String CHANNEL = "menu_item_id";
+    public static final String CHANNEL = "channel";
 }

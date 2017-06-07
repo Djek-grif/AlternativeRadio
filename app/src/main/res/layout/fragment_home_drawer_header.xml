@@ -7,7 +7,8 @@
     android:background="@drawable/bg_home_drawer_header"
     android:orientation="horizontal"
     android:padding="@dimen/default_normal"
-    android:theme="@style/ThemeOverlay.AppCompat.Dark">
+    android:theme="@style/ThemeOverlay.AppCompat.Dark"
+    android:fitsSystemWindows="true">
 
     <ImageView
         android:id="@+id/imageView"
