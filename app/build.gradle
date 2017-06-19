@@ -37,8 +37,6 @@ android {
         release {
             storeFile file("keystores/release/alternativeradio.jks")
             keyAlias "alternativeradio"
-            keyPassword 'drummer24&28'
-            storePassword 'drummer24&28'
         }
     }
 
