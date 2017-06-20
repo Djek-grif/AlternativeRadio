@@ -4,12 +4,20 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:padding="@dimen/default_normal"
-    android:orientation="vertical"
+    android:orientation="horizontal"
     android:background="@drawable/selector_default_primary">
+    <ImageView
+        android:id="@+id/list_item_station_icon"
+        android:layout_width="@dimen/default_large"
+        android:layout_height="@dimen/default_large"
+        android:layout_marginRight="@dimen/default_normal"
+        android:background="@drawable/bg_image_border"
+        android:visibility="gone"/>
     <TextView
         android:id="@+id/list_item_station_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
         style="@style/Widget.Text.Title.Invert"
         tools:text="Title"/>
 </LinearLayout>

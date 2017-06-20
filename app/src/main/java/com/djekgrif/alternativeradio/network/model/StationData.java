@@ -21,6 +21,8 @@ public class StationData implements Parent<Channel>, Parcelable{
     private ArrayList<Channel> channels;
     @SerializedName("name")
     private String name;
+    @SerializedName("iconUrl")
+    private String iconUrl;
 
     public long getId() {
         return id;
@@ -40,6 +42,10 @@ public class StationData implements Parent<Channel>, Parcelable{
 
     public String getName() {
         return name;
+    }
+
+    public String getIconUrl() {
+        return iconUrl;
     }
 
     @Override

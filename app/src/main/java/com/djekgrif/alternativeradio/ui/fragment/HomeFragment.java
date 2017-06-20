@@ -23,6 +23,7 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.bignerdranch.expandablerecyclerview.ExpandableRecyclerAdapter;
 import com.djekgrif.alternativeradio.App;
 import com.djekgrif.alternativeradio.R;
 import com.djekgrif.alternativeradio.di.modules.HomeFragmentModule;
@@ -49,6 +50,8 @@ public class HomeFragment extends BaseFragment implements HomeFragmentView {
 
     @BindView(R.id.home_toolbar)
     Toolbar toolbar;
+    @BindView(R.id.toolbar_title)
+    TextView toolBarTitle;
     @BindView(R.id.home_play_button)
     FloatingActionButton actionButton;
     @BindView(R.id.home_header_image)
@@ -71,6 +74,8 @@ public class HomeFragment extends BaseFragment implements HomeFragmentView {
 
     @Inject
     protected HomeFragmentPresenter homeFragmentPresenter;
+    @Inject
+    protected ImageLoader imageLoader;
 
     private RecentlyRecyclerViewAdapter recentlyListAdapter;
     private StationRecyclerViewAdapter stationListAdapter;
@@ -130,21 +135,27 @@ public class HomeFragment extends BaseFragment implements HomeFragmentView {
         super.onActivityCreated(savedInstanceState);
         actionButton.setEnabled(false);
         actionButton.setOnClickListener(view -> homeFragmentPresenter.onClickActionButton());
+
         recentlyList.setLayoutManager(new LinearLayoutManager(getActivity()));
         recentlyList.setHasFixedSize(true);
         recentlyListAdapter = new RecentlyRecyclerViewAdapter();
         recentlyList.setAdapter(recentlyListAdapter);
-//        navigationView.setNavigationItemSelectedListener(item -> {
-//            return homeFragmentPresenter.navigationItemSelected(item);
-//            Toast.makeText(getActivity(), "Fragment's listener", Toast.LENGTH_LONG).show();
-//            drawer.closeDrawer(GravityCompat.START);
-//            return true;
-//        });
+
         stationList.setLayoutManager(new LinearLayoutManager(getActivity()));
         stationList.setHasFixedSize(true);
-        stationListAdapter = new StationRecyclerViewAdapter(getActivity(), new ArrayList<>());
+        stationListAdapter = new StationRecyclerViewAdapter(getActivity(), imageLoader, new ArrayList<>());
         stationList.setAdapter(stationListAdapter);
         stationListAdapter.setItemSelectedListener(homeFragmentPresenter.getChannelItemListener());
+        stationListAdapter.setExpandCollapseListener(new ExpandableRecyclerAdapter.ExpandCollapseListener() {
+            @Override
+            public void onParentExpanded(int parentPosition) {
+                stationListAdapter.collapseAllParents();
+                stationListAdapter.expandParent(parentPosition);
+            }
+
+            @Override
+            public void onParentCollapsed(int parentPosition) {}
+        });
         homeFragmentPresenter.onActivityCreated(savedInstanceState);
 
     }
@@ -173,6 +184,11 @@ public class HomeFragment extends BaseFragment implements HomeFragmentView {
     public void setUpUI() {
         actionButton.setEnabled(true);
         progressBar.setVisibility(View.GONE);
+    }
+
+    @Override
+    public void updateTitle(String title) {
+        toolBarTitle.setText(title);
     }
 
     @Override

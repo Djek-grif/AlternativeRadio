@@ -130,6 +130,7 @@ public class HomeFragmentPresenterImp implements HomeFragmentPresenter {
             EventBus.getDefault().post(new StreamChangedEvent(channel));
             homeFragmentView.invalidateOptionsMenu();
             homeFragmentView.closeDrawer();
+            homeFragmentView.updateTitle(channel.getName());
         };
     }
 

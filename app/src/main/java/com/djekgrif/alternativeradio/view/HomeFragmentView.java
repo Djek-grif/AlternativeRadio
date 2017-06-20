@@ -16,6 +16,7 @@ import java.util.List;
 public interface HomeFragmentView {
     void setUpUI();
     boolean closeDrawer();
+    void updateTitle(String title);
     void updateSoundInfo(String string);
     void updateRecentlyList(List<RecentlyItem> recentlyItemList);
     void updateImage(ImageLoader imageLoader, String imageUrl);
