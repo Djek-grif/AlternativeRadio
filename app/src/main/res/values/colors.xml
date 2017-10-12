@@ -10,4 +10,7 @@
     <color name="colorTextSecondary">#aaaaaa</color>
     <color name="colorTextPrimaryInvert">#000000</color>
     <color name="colorTextSecondaryInvert">#303030</color>
+
+    <color name="colorPrimaryDarker">#1d1d1d</color>
+    <color name="colorPrimaryShadow">#80121212</color>
 </resources>

@@ -5,6 +5,8 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
+import android.support.design.widget.Snackbar;
+import android.support.graphics.drawable.VectorDrawableCompat;
 import android.support.v4.media.session.MediaControllerCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -28,11 +30,12 @@ import com.djekgrif.alternativeradio.App;
 import com.djekgrif.alternativeradio.R;
 import com.djekgrif.alternativeradio.di.modules.HomeFragmentModule;
 import com.djekgrif.alternativeradio.manager.ImageLoader;
-import com.djekgrif.alternativeradio.network.model.RecentlyItem;
+import com.djekgrif.alternativeradio.network.model.SongTextItem;
 import com.djekgrif.alternativeradio.network.model.StationData;
-import com.djekgrif.alternativeradio.presenter.HomeFragmentPresenter;
-import com.djekgrif.alternativeradio.ui.adapters.RecentlyRecyclerViewAdapter;
+import com.djekgrif.alternativeradio.ui.adapters.HomeRecyclerViewAdapter;
 import com.djekgrif.alternativeradio.ui.adapters.StationRecyclerViewAdapter;
+import com.djekgrif.alternativeradio.ui.model.HomeListItem;
+import com.djekgrif.alternativeradio.ui.presenter.HomeFragmentPresenter;
 import com.djekgrif.alternativeradio.view.HomeFragmentView;
 
 import java.util.ArrayList;
@@ -53,7 +56,11 @@ public class HomeFragment extends BaseFragment implements HomeFragmentView {
     @BindView(R.id.toolbar_title)
     TextView toolBarTitle;
     @BindView(R.id.home_play_button)
-    FloatingActionButton actionButton;
+    FloatingActionButton playButton;
+    @BindView(R.id.home_text_btn)
+    FloatingActionButton textButton;
+    @BindView(R.id.home_text_progress)
+    ProgressBar textProgressBar;
     @BindView(R.id.home_header_image)
     ImageView headerImage;
     @BindView(R.id.home_artist_image)
@@ -70,6 +77,8 @@ public class HomeFragment extends BaseFragment implements HomeFragmentView {
     RecyclerView stationList;
     @BindView(R.id.home_progress)
     ProgressBar progressBar;
+    @BindView(R.id.home_header_share)
+    View shareButton;
 
 
     @Inject
@@ -77,7 +86,7 @@ public class HomeFragment extends BaseFragment implements HomeFragmentView {
     @Inject
     protected ImageLoader imageLoader;
 
-    private RecentlyRecyclerViewAdapter recentlyListAdapter;
+    private HomeRecyclerViewAdapter recentlyListAdapter;
     private StationRecyclerViewAdapter stationListAdapter;
 
     public static HomeFragment getInstance() {
@@ -133,12 +142,15 @@ public class HomeFragment extends BaseFragment implements HomeFragmentView {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        actionButton.setEnabled(false);
-        actionButton.setOnClickListener(view -> homeFragmentPresenter.onClickActionButton());
+        playButton.setEnabled(false);
+        textButton.setEnabled(false);
+        playButton.setOnClickListener(view -> homeFragmentPresenter.onClickActionButton());
+        shareButton.setOnClickListener(vew -> homeFragmentPresenter.onClickShare(songInfo.getText().toString()));
+        textButton.setOnClickListener(v -> homeFragmentPresenter.onClickTextButton());
 
         recentlyList.setLayoutManager(new LinearLayoutManager(getActivity()));
         recentlyList.setHasFixedSize(true);
-        recentlyListAdapter = new RecentlyRecyclerViewAdapter();
+        recentlyListAdapter = new HomeRecyclerViewAdapter();
         recentlyList.setAdapter(recentlyListAdapter);
 
         stationList.setLayoutManager(new LinearLayoutManager(getActivity()));
@@ -182,8 +194,41 @@ public class HomeFragment extends BaseFragment implements HomeFragmentView {
 
     @Override
     public void setUpUI() {
-        actionButton.setEnabled(true);
+        playButton.setEnabled(true);
+        textButton.setEnabled(true);
         progressBar.setVisibility(View.GONE);
+        textButton.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public void openSongText(SongTextItem songTextItem) {
+        recentlyListAdapter.addSongTextItem(songTextItem);
+        recentlyList.scrollToPosition(0);
+    }
+
+    @Override
+    public void failedSongText() {
+        Snackbar.make(playButton, R.string.sorry_no_results, Snackbar.LENGTH_LONG).show();
+    }
+
+    @Override
+    public void hideSongText() {
+        recentlyListAdapter.removeSongTextItem();
+    }
+
+    @Override
+    public boolean isSongTextOpen() {
+        return recentlyListAdapter.isSongTextItem();
+    }
+
+    @Override
+    public void hideTextButtonProgress() {
+        textProgressBar.setVisibility(View.GONE);
+    }
+
+    @Override
+    public void showTextButtonProgress() {
+        textProgressBar.setVisibility(View.VISIBLE);
     }
 
     @Override
@@ -197,7 +242,7 @@ public class HomeFragment extends BaseFragment implements HomeFragmentView {
     }
 
     @Override
-    public void updateRecentlyList(List<RecentlyItem> recentlyItemList) {
+    public void updateRecentlyList(List<HomeListItem> recentlyItemList) {
         recentlyListAdapter.updateData(recentlyItemList);
     }
 
@@ -208,13 +253,13 @@ public class HomeFragment extends BaseFragment implements HomeFragmentView {
 
     @Override
     public void updateImage(ImageLoader imageLoader, String imageUrl) {
-        imageLoader.loadDefault(imageUrl, artistImage, R.drawable.home_image_thumbnail);
-        imageLoader.loadDefault(imageUrl, headerImage);
+        imageLoader.loadDefault(imageUrl, artistImage, VectorDrawableCompat.create(getResources(), R.drawable.ic_guitar, null));
+        imageLoader.loadDefault(imageUrl, headerImage, VectorDrawableCompat.create(getResources(), R.drawable.ic_guitar_panarama, null));
     }
 
     @Override
     public void updateActionButton(int state) {
-        actionButton.setImageResource(state == PlaybackStateCompat.STATE_PLAYING ? android.R.drawable.ic_media_pause : android.R.drawable.ic_media_play);
+        playButton.setImageResource(state == PlaybackStateCompat.STATE_PLAYING ? android.R.drawable.ic_media_pause : android.R.drawable.ic_media_play);
     }
 
     @Override

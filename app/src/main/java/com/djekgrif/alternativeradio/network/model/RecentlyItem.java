@@ -3,11 +3,13 @@ package com.djekgrif.alternativeradio.network.model;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.djekgrif.alternativeradio.ui.model.HomeListItem;
+
 /**
  * Created by djek-grif on 1/8/17.
  */
 
-public class RecentlyItem implements Parcelable {
+public class RecentlyItem implements Parcelable, HomeListItem {
 
     private String artistName;
     private String trackName;
@@ -31,6 +33,11 @@ public class RecentlyItem implements Parcelable {
         return time;
     }
 
+
+    @Override
+    public int getType() {
+        return RECENTLY_ITEM;
+    }
 
     @Override
     public int describeContents() {

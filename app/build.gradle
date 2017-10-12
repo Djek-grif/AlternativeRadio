@@ -1,9 +1,8 @@
-def versionMajor = 0
-def versionMinor = 1
-def versionPatch = 3
+def versionMajor = 1
+def versionMinor = 0
+def versionPatch = 0
 
 apply plugin: 'com.android.application'
-apply plugin: 'com.neenbedankt.android-apt'
 apply plugin: 'me.tatarka.retrolambda'
 apply plugin: 'com.google.gms.google-services'
 
@@ -12,7 +11,7 @@ android {
     buildToolsVersion rootProject.buildToolsVersion
 
     defaultConfig {
-        applicationId "com.djekgrif.alternativeradio"
+        applicationId "com.djekgrif.radio"
         minSdkVersion 16
         targetSdkVersion 25
 
@@ -20,6 +19,9 @@ android {
 
         versionCode versionMajor * 10000 + versionMinor * 1000 + versionPatch * 100
         versionName "${versionMajor}.${versionMinor}.${versionPatch}"
+
+        vectorDrawables.useSupportLibrary = true
+
     }
 
     compileOptions {
@@ -40,31 +42,6 @@ android {
         }
     }
 
-    buildTypes {
-        debug {
-            applicationIdSuffix '.debug'
-            debuggable true
-            signingConfig signingConfigs.debug
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-        }
-        release {
-            minifyEnabled true
-            signingConfig signingConfigs.release
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-        }
-    }
-
-    productFlavors {
-        internal {
-            applicationId = "com.djekgrif.alternativeradio.internal"
-            buildConfigField "boolean", "IS_INTERNAL_BUILD", "true"
-        }
-        production {
-            applicationId = "com.djekgrif.alternativeradio"
-            buildConfigField "boolean", "IS_INTERNAL_BUILD", "false"
-        }
-    }
-
     packagingOptions {
         exclude 'META-INF/LICENSE'
         exclude 'META-INF/LICENSE.txt'
@@ -73,40 +50,40 @@ android {
         exclude 'META-INF/services/javax.annotation.processing.Processor'
         exclude 'LICENSE.txt'
     }
-    buildToolsVersion '25.0.0'
+    buildToolsVersion '25.0.3'
 }
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
 
-    compile 'com.android.support:appcompat-v7:25.1.0'
-    compile 'com.android.support:design:25.1.0'
+    compile 'com.android.support:appcompat-v7:25.3.1'
+    compile 'com.android.support:design:25.3.1'
+    compile 'com.android.support.constraint:constraint-layout:1.0.2'
     compile 'com.bignerdranch.android:expandablerecyclerview:3.0.0-RC1'
     compile 'com.google.android.exoplayer:exoplayer:r2.0.4'
 
-    compile 'com.jakewharton.timber:timber:4.1.2'
-
     compile 'com.google.code.gson:gson:2.6.2'
-    compile 'com.squareup.okhttp3:okhttp:3.3.0'
-    compile 'com.squareup.okhttp3:logging-interceptor:3.3.1'
-    compile 'com.squareup.retrofit2:retrofit:2.0.2'
-    compile 'com.squareup.retrofit2:converter-gson:2.0.2'
+    compile 'com.squareup.retrofit2:retrofit:2.3.0'
+    compile 'com.squareup.retrofit2:converter-gson:2.3.0'
     compile 'com.squareup.picasso:picasso:2.5.2'
     compile 'net.danlew:android.joda:2.9.3.1'
 
-    compile 'com.google.dagger:dagger:2.5'
-    apt 'com.google.dagger:dagger-compiler:2.5'
+    compile 'com.google.dagger:dagger:2.9'
+    annotationProcessor 'com.google.dagger:dagger-compiler:2.9'
+    compile 'com.jakewharton:butterknife:8.7.0'
+    annotationProcessor 'com.jakewharton:butterknife-compiler:8.7.0'
 
-    compile 'com.jakewharton:butterknife:8.2.1'
-    apt 'com.jakewharton:butterknife-compiler:8.2.1'
 
     compile 'io.reactivex:rxjava:1.1.3'
     compile 'io.reactivex:rxandroid:1.2.0'
-    compile 'com.squareup.retrofit2:adapter-rxjava:2.0.2'
+    compile 'com.squareup.retrofit2:adapter-rxjava:2.3.0'
 
     compile 'com.google.firebase:firebase-crash:10.0.1'
     compile 'com.google.firebase:firebase-database:10.0.1'
     compile 'org.greenrobot:eventbus:3.0.0'
+
+    // https://mvnrepository.com/artifact/org.jsoup/jsoup
+    compile 'org.jsoup:jsoup:1.7.2'
 
 
     // Force usage of support annotations in the test app, since it is internally used by the runner module.

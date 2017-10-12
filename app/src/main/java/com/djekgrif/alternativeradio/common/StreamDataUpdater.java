@@ -9,10 +9,10 @@ import com.djekgrif.alternativeradio.manager.Preferences;
 import com.djekgrif.alternativeradio.network.ApiService;
 import com.djekgrif.alternativeradio.network.SimpleSubscriber;
 import com.djekgrif.alternativeradio.network.model.Channel;
-import com.djekgrif.alternativeradio.network.model.RecentlyItem;
 import com.djekgrif.alternativeradio.network.model.SongInfoDetails;
 import com.djekgrif.alternativeradio.network.model.StationData;
 import com.djekgrif.alternativeradio.network.model.StreamData;
+import com.djekgrif.alternativeradio.ui.model.HomeListItem;
 import com.djekgrif.alternativeradio.ui.model.LastAppState;
 
 import java.util.List;
@@ -66,7 +66,7 @@ public class StreamDataUpdater {
         this.preferences = preferences;
     }
 
-    public void updateConfigurationData(){
+    public void updateConfigurationData() {
         configurationManager.updateConfigurationData(configurationData -> {
             LastAppState lastAppState = preferences.getLastAppState();
             if (lastAppState != null && configurationData.getStations().contains(lastAppState.getStationData())) {
@@ -103,7 +103,7 @@ public class StreamDataUpdater {
     public void startSoundInfoUpdater() {
         configurationManager.updateConfigurationData(configurationData -> {
             infoUpdaterHandler.removeCallbacks(updateInfoRunnable);
-            if(currentChannel != null && (!TextUtils.isEmpty(currentChannel.getSongInfoUrl()) || !TextUtils.isEmpty(currentChannel.getRecentlyInfoUrl()))) {
+            if (currentChannel != null && (!TextUtils.isEmpty(currentChannel.getSongInfoUrl()) || !TextUtils.isEmpty(currentChannel.getRecentlyInfoUrl()))) {
                 infoUpdaterHandler.post(updateInfoRunnable);
             }
         });
@@ -114,20 +114,22 @@ public class StreamDataUpdater {
     }
 
     public void updateSoundInfo() {
-        apiService.getCurrentSoundInfo(currentChannel.getSongInfoUrl(), searchMediaUrl, new SimpleSubscriber<SongInfoDetails>() {
-            @Override
-            public void onNext(SongInfoDetails soundInfoResponse) {
-                if (soundInfoResponse != null) {
-                    updateSoundInfoListener.updateData(soundInfoResponse);
-                }
-            }
-        });
-        apiService.getRecentlyList(currentChannel.getRecentlyInfoUrl(), new SimpleSubscriber<List<RecentlyItem>>() {
-            @Override
-            public void onNext(List<RecentlyItem> recentlyItems) {
-                updateSoundInfoListener.updateRecentlyList(recentlyItems);
-            }
-        });
+        apiService.getCurrentSoundInfo(currentChannel.getSongInfoUrl(), searchMediaUrl)
+                .subscribe(new SimpleSubscriber<SongInfoDetails>() {
+                    @Override
+                    public void onNext(SongInfoDetails soundInfoResponse) {
+                        if (soundInfoResponse != null) {
+                            updateSoundInfoListener.updateData(soundInfoResponse);
+                        }
+                    }
+                });
+        apiService.getRecentlyList(currentChannel.getRecentlyInfoUrl())
+                .subscribe(new SimpleSubscriber<List<HomeListItem>>() {
+                    @Override
+                    public void onNext(List<HomeListItem> recentlyItems) {
+                        updateSoundInfoListener.updateRecentlyList(recentlyItems);
+                    }
+                });
     }
 
 }

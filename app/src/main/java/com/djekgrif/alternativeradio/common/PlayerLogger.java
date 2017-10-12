@@ -21,8 +21,6 @@ import java.text.NumberFormat;
 import java.util.List;
 import java.util.Locale;
 
-import timber.log.Timber;
-
 /**
  * Created by djek-grif on 10/20/16.
  */
@@ -50,40 +48,19 @@ public class PlayerLogger implements AudioRendererEventListener,
     }
 
     @Override
-    public void onAudioEnabled(DecoderCounters counters) {
-        Timber.d("audioEnabled [" + getSessionTimeString() + "]");
-        Timber.d("inputBufferCount: %s", String.valueOf(counters.inputBufferCount));
-    }
-
+    public void onAudioEnabled(DecoderCounters counters) {}
     @Override
-    public void onAudioSessionId(int audioSessionId) {
-        Timber.d("audioSessionId [" + audioSessionId + "]");
-    }
-
+    public void onAudioSessionId(int audioSessionId) {}
     @Override
-    public void onAudioDecoderInitialized(String decoderName, long initializedTimestampMs, long initializationDurationMs) {
-        Timber.d("audioDecoderInitialized [" + getSessionTimeString() + ", " + decoderName + "]");
-    }
-
+    public void onAudioDecoderInitialized(String decoderName, long initializedTimestampMs, long initializationDurationMs) {}
     @Override
-    public void onAudioInputFormatChanged(Format format) {
-        Timber.d("audioFormatChanged [" + getSessionTimeString() + ", " + getFormatString(format) + "]");
-    }
-
+    public void onAudioInputFormatChanged(Format format) {}
     @Override
-    public void onAudioTrackUnderrun(int bufferSize, long bufferSizeMs, long elapsedSinceLastFeedMs) {
-
-    }
-
+    public void onAudioTrackUnderrun(int bufferSize, long bufferSizeMs, long elapsedSinceLastFeedMs) {}
     @Override
-    public void onAudioDisabled(DecoderCounters counters) {
-        Timber.d("audioDisabled [" + getSessionTimeString() + "]");
-    }
-
+    public void onAudioDisabled(DecoderCounters counters) {}
     @Override
-    public void onLoadingChanged(boolean isLoading) {
-        Timber.d("loading [" + isLoading + "]");
-    }
+    public void onLoadingChanged(boolean isLoading) {}
 
     @Override
     public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
@@ -104,43 +81,19 @@ public class PlayerLogger implements AudioRendererEventListener,
             default:
                 state = "?";
         }
-        Timber.d("state [" + getSessionTimeString() + ", " + playWhenReady + ", " + state + "]");
+        Logger.d("Player state: " + getSessionTimeString() + ", " + playWhenReady + ", " + state + "]", Logger.PLAYER);
     }
 
     @Override
-    public void onTimelineChanged(Timeline timeline, Object manifest) {
-        if (timeline == null) {
-            return;
-        }
-        int periodCount = timeline.getPeriodCount();
-        int windowCount = timeline.getWindowCount();
-        Timber.d("sourceInfo [periodCount=" + periodCount + ", windowCount=" + windowCount);
-        for (int i = 0; i < Math.min(periodCount, MAX_TIMELINE_ITEM_LINES); i++) {
-            timeline.getPeriod(i, period);
-            Timber.d("  " +  "period [" + getTimeString(period.getDurationMs()) + "]");
-        }
-        if (periodCount > MAX_TIMELINE_ITEM_LINES) {
-            Timber.d("  ...");
-        }
-        for (int i = 0; i < Math.min(windowCount, MAX_TIMELINE_ITEM_LINES); i++) {
-            timeline.getWindow(i, window);
-            Timber.d("  " +  "window [" + getTimeString(window.getDurationMs()) + ", " + window.isSeekable + ", " + window.isDynamic + "]");
-        }
-        if (windowCount > MAX_TIMELINE_ITEM_LINES) {
-            Timber.d("  ...");
-        }
-        Timber.d("]");
-    }
+    public void onTimelineChanged(Timeline timeline, Object manifest) {}
 
     @Override
     public void onPlayerError(ExoPlaybackException error) {
-        Timber.e(error, "playerFailed [" + getSessionTimeString() + "]");
+        Logger.e(error, "Error play sessionTime:" + getSessionTimeString());
     }
 
     @Override
-    public void onPositionDiscontinuity() {
-        Timber.d("positionDiscontinuity");
-    }
+    public void onPositionDiscontinuity() {}
 
 
     @Override
@@ -148,25 +101,25 @@ public class PlayerLogger implements AudioRendererEventListener,
         for (Id3Frame id3Frame : metadata) {
             if (id3Frame instanceof TxxxFrame) {
                 TxxxFrame txxxFrame = (TxxxFrame) id3Frame;
-                Timber.i(String.format("ID3 TimedMetadata %s: description=%s, value=%s", txxxFrame.id,
-                        txxxFrame.description, txxxFrame.value));
+                Logger.i(String.format("ID3 TimedMetadata %s: description=%s, value=%s", txxxFrame.id,
+                        txxxFrame.description, txxxFrame.value), Logger.Level.DETAILS);
             } else if (id3Frame instanceof PrivFrame) {
                 PrivFrame privFrame = (PrivFrame) id3Frame;
-                Timber.i(String.format("ID3 TimedMetadata %s: owner=%s", privFrame.id, privFrame.owner));
+                Logger.i(String.format("ID3 TimedMetadata %s: owner=%s", privFrame.id, privFrame.owner), Logger.Level.DETAILS);
             } else if (id3Frame instanceof GeobFrame) {
                 GeobFrame geobFrame = (GeobFrame) id3Frame;
-                Timber.i(String.format("ID3 TimedMetadata %s: mimeType=%s, filename=%s, description=%s",
-                        geobFrame.id, geobFrame.mimeType, geobFrame.filename, geobFrame.description));
+                Logger.i(String.format("ID3 TimedMetadata %s: mimeType=%s, filename=%s, description=%s",
+                        geobFrame.id, geobFrame.mimeType, geobFrame.filename, geobFrame.description), Logger.Level.DETAILS);
             } else if (id3Frame instanceof ApicFrame) {
                 ApicFrame apicFrame = (ApicFrame) id3Frame;
-                Timber.i(String.format("ID3 TimedMetadata %s: mimeType=%s, description=%s",
-                        apicFrame.id, apicFrame.mimeType, apicFrame.description));
+                Logger.i(String.format("ID3 TimedMetadata %s: mimeType=%s, description=%s",
+                        apicFrame.id, apicFrame.mimeType, apicFrame.description), Logger.Level.DETAILS);
             } else if (id3Frame instanceof TextInformationFrame) {
                 TextInformationFrame textInformationFrame = (TextInformationFrame) id3Frame;
-                Timber.i(String.format("ID3 TimedMetadata %s: description=%s", textInformationFrame.id,
-                        textInformationFrame.description));
+                Logger.i(String.format("ID3 TimedMetadata %s: description=%s", textInformationFrame.id,
+                        textInformationFrame.description), Logger.Level.DETAILS);
             } else {
-                Timber.i(String.format("ID3 TimedMetadata %s", id3Frame.id));
+                Logger.i(String.format("ID3 TimedMetadata %s", id3Frame.id), Logger.Level.DETAILS);
             }
         }
     }
@@ -179,30 +132,30 @@ public class PlayerLogger implements AudioRendererEventListener,
         return timeMs == C.TIME_UNSET ? "?" : TIME_FORMAT.format((timeMs) / 1000f);
     }
 
-    private static String getFormatString(Format format) {
-        if (format == null) {
-            return "null";
-        }
-        StringBuilder builder = new StringBuilder();
-        builder.append("id=").append(format.id).append(", mimeType=").append(format.sampleMimeType);
-        if (format.bitrate != Format.NO_VALUE) {
-            builder.append(", bitrate=").append(format.bitrate);
-        }
-        if (format.width != Format.NO_VALUE && format.height != Format.NO_VALUE) {
-            builder.append(", res=").append(format.width).append("x").append(format.height);
-        }
-        if (format.frameRate != Format.NO_VALUE) {
-            builder.append(", fps=").append(format.frameRate);
-        }
-        if (format.channelCount != Format.NO_VALUE) {
-            builder.append(", channels=").append(format.channelCount);
-        }
-        if (format.sampleRate != Format.NO_VALUE) {
-            builder.append(", sample_rate=").append(format.sampleRate);
-        }
-        if (format.language != null) {
-            builder.append(", language=").append(format.language);
-        }
-        return builder.toString();
-    }
+//    private static String getFormatString(Format format) {
+//        if (format == null) {
+//            return "null";
+//        }
+//        StringBuilder builder = new StringBuilder();
+//        builder.append("id=").append(format.id).append(", mimeType=").append(format.sampleMimeType);
+//        if (format.bitrate != Format.NO_VALUE) {
+//            builder.append(", bitrate=").append(format.bitrate);
+//        }
+//        if (format.width != Format.NO_VALUE && format.height != Format.NO_VALUE) {
+//            builder.append(", res=").append(format.width).append("x").append(format.height);
+//        }
+//        if (format.frameRate != Format.NO_VALUE) {
+//            builder.append(", fps=").append(format.frameRate);
+//        }
+//        if (format.channelCount != Format.NO_VALUE) {
+//            builder.append(", channels=").append(format.channelCount);
+//        }
+//        if (format.sampleRate != Format.NO_VALUE) {
+//            builder.append(", sample_rate=").append(format.sampleRate);
+//        }
+//        if (format.language != null) {
+//            builder.append(", language=").append(format.language);
+//        }
+//        return builder.toString();
+//    }
 }

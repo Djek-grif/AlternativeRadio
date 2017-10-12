@@ -15,17 +15,26 @@ import java.util.List;
 
 public class StationData implements Parent<Channel>, Parcelable{
 
+    public static final int PUBLIC_STATUS = 1;
+    public static final int PENDING_STATUS = 0;
+
     @SerializedName("id")
-    long id;
+    private long id;
     @SerializedName("channels")
     private ArrayList<Channel> channels;
     @SerializedName("name")
     private String name;
     @SerializedName("iconUrl")
     private String iconUrl;
+    @SerializedName("status")
+    private int status;
 
     public long getId() {
         return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
     }
 
     public void setChannels(ArrayList<Channel> channels) {
@@ -46,6 +55,18 @@ public class StationData implements Parent<Channel>, Parcelable{
 
     public String getIconUrl() {
         return iconUrl;
+    }
+
+    public int getStatus() {
+        return status;
+    }
+
+    public void setStatus(int status) {
+        this.status = status;
+    }
+
+    public boolean isPublic(){
+        return status == PUBLIC_STATUS;
     }
 
     @Override

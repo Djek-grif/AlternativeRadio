@@ -2,7 +2,6 @@ package com.djekgrif.alternativeradio.manager;
 
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
-import android.net.Uri;
 import android.widget.ImageView;
 
 import com.djekgrif.alternativeradio.App;
@@ -20,22 +19,31 @@ public class PicassoImageLoader implements ImageLoader{
     private Picasso picasso;
 
     public PicassoImageLoader() {
-        picasso = new Picasso.Builder(App.getInstance()).loggingEnabled(BuildConfig.IS_INTERNAL_BUILD).listener(new Picasso.Listener() {
-            @Override
-            public void onImageLoadFailed(Picasso picasso, Uri uri, Exception exception) {
-                exception.printStackTrace();
-            }
-        }).build();
+        picasso = new Picasso.Builder(App.getInstance()).loggingEnabled(BuildConfig.DEBUG).listener((picasso1, uri, exception) -> exception.printStackTrace()).build();
     }
 
     @Override
     public void loadDefault(String url, final ImageView imageView) {
-        picasso.load(url).config(Bitmap.Config.RGB_565).fit().centerInside().into(imageView);
+        picasso.load(url)
+                .config(Bitmap.Config.RGB_565)
+                .fit()
+                .centerInside()
+                .into(imageView);
     }
 
     @Override
     public void loadDefault(String url, ImageView imageView, int placeholder) {
         picasso.load(url).config(Bitmap.Config.RGB_565).fit().centerInside().placeholder(placeholder).into(imageView);
+    }
+
+    @Override
+    public void loadDefault(String url, ImageView imageView, Drawable placeholder) {
+        picasso.load(url)
+                .config(Bitmap.Config.RGB_565)
+                .fit()
+                .centerInside()
+                .placeholder(placeholder)
+                .into(imageView);
     }
 
     @Override

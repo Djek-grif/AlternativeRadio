@@ -24,6 +24,11 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".ui.activity.CopyToClipboardActivity"
+            android:exported="false"
+            android:icon="@drawable/ic_menu_copy"
+            android:label="@string/copy_to_clipboard"
+            android:theme="@android:style/Theme.NoDisplay"/>
         <service android:name=".common.StreamService">
             <intent-filter>
                 <action android:name="android.intent.action.MEDIA_BUTTON" />

@@ -2,13 +2,12 @@ package com.djekgrif.alternativeradio;
 
 import android.app.Application;
 
+import com.djekgrif.alternativeradio.common.Logger;
 import com.djekgrif.alternativeradio.di.components.DaggerRadioAppComponent;
 import com.djekgrif.alternativeradio.di.components.RadioAppComponent;
 import com.djekgrif.alternativeradio.di.modules.RadioAppModule;
 
 import net.danlew.android.joda.JodaTimeAndroid;
-
-import timber.log.Timber;
 
 /**
  * Created by djek-grif on 5/25/16.
@@ -25,8 +24,8 @@ public class App extends Application {
         instance = this;
         buildGraphAndInject();
         JodaTimeAndroid.init(this);
-        if(BuildConfig.IS_INTERNAL_BUILD){
-            Timber.plant(new Timber.DebugTree());
+        if(BuildConfig.DEBUG){
+            Logger.setCurrentLevel(Logger.Level.DETAILS);
         }
     }
 

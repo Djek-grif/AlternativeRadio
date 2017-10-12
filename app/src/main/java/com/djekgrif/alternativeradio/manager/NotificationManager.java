@@ -62,7 +62,6 @@ public class NotificationManager {
             builder.addAction(new NotificationCompat.Action(android.R.drawable.ic_media_pause,
                     App.getInstance().getString(R.string.pause),
                     MediaButtonReceiver.buildMediaButtonPendingIntent(App.getInstance(), PlaybackStateCompat.ACTION_STOP)));
-            builder.setStyle(new NotificationCompat.MediaStyle().setShowActionsInCompactView(0).setMediaSession(mediaSessionCompat.getSessionToken()));
             builder.setSmallIcon(DeviceUtils.isLollipopOrHigher() ? R.drawable.ic_service_transparent : R.drawable.ic_service);
             NotificationManagerCompat.from(App.getInstance()).notify(NOTIFICATION_ID, builder.build());
     }
@@ -73,7 +72,6 @@ public class NotificationManager {
             builder.addAction(new NotificationCompat.Action(android.R.drawable.ic_media_play,
                     App.getInstance().getString(R.string.play),
                     MediaButtonReceiver.buildMediaButtonPendingIntent(App.getInstance(), PlaybackStateCompat.ACTION_PLAY)));
-            builder.setStyle(new NotificationCompat.MediaStyle().setShowActionsInCompactView(0).setMediaSession(mediaSessionCompat.getSessionToken()));
             builder.setSmallIcon(DeviceUtils.isLollipopOrHigher() ? R.drawable.ic_service_transparent : R.drawable.ic_service);
             NotificationManagerCompat.from(App.getInstance()).notify(NOTIFICATION_ID, builder.build());
         }
@@ -100,6 +98,7 @@ public class NotificationManager {
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context);
         builder
+                .setStyle(new NotificationCompat.MediaStyle().setShowActionsInCompactView(0).setMediaSession(mediaSession.getSessionToken()))
                 .setShowWhen(false)
                 .setContentTitle(description.getTitle())
                 .setContentText(description.getSubtitle())

@@ -23,4 +23,5 @@
     <dimen name="default_text_large">22sp</dimen>
     <dimen name="default_text_big">26sp</dimen>
     <dimen name="home_artist_image">100dp</dimen>
+    <dimen name="home_text_progress">60dp</dimen>
 </resources>

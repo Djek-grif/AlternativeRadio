@@ -1,0 +1,19 @@
+<resources>
+    <string name="app_name">Караоке Радио</string>
+
+    <string name="navigation_drawer_open">Открыть навигацию</string>
+    <string name="navigation_drawer_close">Закрыть навигацию</string>
+    <string name="press_again_exit">Нажмите сново для выхода</string>
+    <string name="stations">Настройки</string>
+    <string name="recently_track_format" formatted="false">%s - %s</string>
+    <string name="copy_to_clipboard">Скопировать в буфер</string>
+
+    <string name="action_settings">НастК сожалению поиск не дал результатовройки</string>
+    <string name="pause">Пауза</string>
+    <string name="play">Играть</string>
+    <string name="kbs">%skb/s</string>
+    <string name="sorry_no_results"></string>
+    <string name="connection_problem">Проблемы подключения</string>
+    <string name="no_connection">Нет подключения к сети интернет. Пожайлусто провертие подключение в настройках и попробуйте сново</string>
+    <string name="retry">Попробовать сново</string>
+</resources>

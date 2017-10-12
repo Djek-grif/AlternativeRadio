@@ -1,5 +1,6 @@
 package com.djekgrif.alternativeradio.common;
 
+import android.content.Context;
 import android.media.AudioManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -13,8 +14,6 @@ import com.google.android.exoplayer2.SimpleExoPlayer;
 
 import java.util.List;
 
-import timber.log.Timber;
-
 /**
  * Created by djek-grif on 2/21/17.
  */
@@ -22,11 +21,18 @@ import timber.log.Timber;
 public class BaseStreamService extends MediaBrowserServiceCompat {
 
     protected SimpleExoPlayer player;
+    protected AudioManager audioManager;
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+    }
 
     protected AudioManager.OnAudioFocusChangeListener onAudioFocusChangeListener = new AudioManager.OnAudioFocusChangeListener() {
         @Override
         public void onAudioFocusChange(int focusChange) {
-            Timber.i("focusChange to: %d", focusChange);
+            Logger.i("Audio focus changed to: " + focusChange, Logger.PLAYER);
             switch (focusChange) {
                 case AudioManager.AUDIOFOCUS_LOSS: {
                     if (player.getPlayWhenReady()) {
@@ -56,6 +62,16 @@ public class BaseStreamService extends MediaBrowserServiceCompat {
             }
         }
     };
+
+    protected boolean isAudioFocus() {
+        unregisterAudioFocusListener();
+        int result = audioManager.requestAudioFocus(onAudioFocusChangeListener, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN);
+        return result == AudioManager.AUDIOFOCUS_GAIN;
+    }
+
+    protected void unregisterAudioFocusListener(){
+        audioManager.abandonAudioFocus(onAudioFocusChangeListener);
+    }
 
     @Nullable
     @Override

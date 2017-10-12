@@ -1,4 +1,4 @@
-package com.djekgrif.alternativeradio.presenter;
+package com.djekgrif.alternativeradio.ui.presenter;
 
 /**
  * Created by djek-grif on 5/31/16.

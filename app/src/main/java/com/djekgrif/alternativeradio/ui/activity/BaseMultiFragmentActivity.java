@@ -6,7 +6,6 @@ import android.support.v4.app.FragmentTransaction;
 import android.text.TextUtils;
 
 import com.djekgrif.alternativeradio.R;
-import com.djekgrif.alternativeradio.di.components.RadioAppComponent;
 import com.djekgrif.alternativeradio.ui.fragment.BaseFragment;
 import com.djekgrif.alternativeradio.ui.utils.BundleKeys;
 

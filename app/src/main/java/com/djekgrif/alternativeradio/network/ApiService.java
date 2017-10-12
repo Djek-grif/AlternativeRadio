@@ -1,13 +1,12 @@
 package com.djekgrif.alternativeradio.network;
 
 import com.djekgrif.alternativeradio.network.model.ConfigurationData;
-import com.djekgrif.alternativeradio.network.model.RecentlyItem;
 import com.djekgrif.alternativeradio.network.model.SongInfoDetails;
+import com.djekgrif.alternativeradio.ui.model.HomeListItem;
 
 import java.util.List;
 
-import rx.Subscriber;
-import rx.Subscription;
+import rx.Observable;
 import rx.functions.Action1;
 
 /**
@@ -16,8 +15,9 @@ import rx.functions.Action1;
 public interface ApiService {
 
     String FIREBASE_DATABASE_NODE_DATA = "data";
+    String FIREBASE_DATABASE_NODE_STATIONS = "stations";
 
-    Subscription getCurrentSoundInfo(String radioInfoUrl, String searchUrl, Subscriber<SongInfoDetails> subscriber);
-    Subscription getRecentlyList(String radioInfoUrl, Subscriber<List<RecentlyItem>> subscriber);
+    Observable<SongInfoDetails> getCurrentSoundInfo(String radioInfoUrl, String searchUrl);
+    Observable<List<HomeListItem>> getRecentlyList(String radioInfoUrl);
     void getConfigurationData(Action1<ConfigurationData> subscriber);
 }

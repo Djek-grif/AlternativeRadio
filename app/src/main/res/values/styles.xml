@@ -36,7 +36,7 @@
     </style>
     <style name="Widget.Text.Description" parent="TextAppearance.AppCompat.Small">
         <item name="android:textColor">@color/colorTextPrimary</item>
-        <item name="android:textSize">@dimen/default_text_small</item>
+        <item name="android:textSize">@dimen/default_text_smaller</item>
     </style>
     <style name="Widget.Text.Micro" parent="TextAppearance.AppCompat.Small">
         <item name="android:textColor">@color/colorTextPrimary</item>

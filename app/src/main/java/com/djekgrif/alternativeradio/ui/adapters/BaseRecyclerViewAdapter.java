@@ -36,8 +36,6 @@ public abstract class BaseRecyclerViewAdapter<D, T extends RecyclerView.ViewHold
         this.itemSelectedViewListener = itemSelectedViewListener;
     }
 
-
-
     @Override
     public int getItemCount() {
         return dataList == null ? 0 : dataList.size();

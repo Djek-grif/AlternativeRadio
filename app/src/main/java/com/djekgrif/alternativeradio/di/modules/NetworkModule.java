@@ -1,5 +1,9 @@
 package com.djekgrif.alternativeradio.di.modules;
 
+import com.djekgrif.alternativeradio.BuildConfig;
+import com.djekgrif.alternativeradio.common.Logger;
+import com.djekgrif.alternativeradio.network.NetworkInterceptor;
+
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 
@@ -12,9 +16,6 @@ import javax.net.ssl.X509TrustManager;
 import dagger.Module;
 import dagger.Provides;
 import okhttp3.OkHttpClient;
-import okhttp3.logging.HttpLoggingInterceptor;
-import timber.log.Timber;
-
 import static java.util.concurrent.TimeUnit.SECONDS;
 
 /**
@@ -27,17 +28,16 @@ public class NetworkModule {
     @Provides
     OkHttpClient provideOkHttpClient(){
         X509TrustManager x509TrustManager = buildX509TrustManager();
-        HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
-        logging.setLevel(HttpLoggingInterceptor.Level.BODY);
-        OkHttpClient okHttpClient = new OkHttpClient
-                .Builder()
-                .addInterceptor(logging)
-                .connectTimeout(30, SECONDS)
-                .readTimeout(30, SECONDS)
-                .writeTimeout(30, SECONDS)
-                .sslSocketFactory(buildSSLSocketFactory(x509TrustManager), x509TrustManager)
-                .build();
-        return okHttpClient;
+        OkHttpClient.Builder builder = new OkHttpClient.Builder();
+        if(BuildConfig.DEBUG) {
+            NetworkInterceptor logging = new NetworkInterceptor();
+            builder.addInterceptor(logging);
+        }
+        builder.connectTimeout(30, SECONDS);
+        builder.readTimeout(30, SECONDS);
+        builder.writeTimeout(30, SECONDS);
+        builder.sslSocketFactory(buildSSLSocketFactory(x509TrustManager), x509TrustManager);
+        return builder.build();
     }
 
 
@@ -48,7 +48,7 @@ public class NetworkModule {
             context.init(null, new TrustManager[]{x509TrustManager}, null);
             return context.getSocketFactory();
         } catch (Exception e) {
-            Timber.e("Error provide SSLSocketFactory");
+            Logger.e("Error provide SSLSocketFactory");
             throw new AssertionError(e);
         }
     }

@@ -29,6 +29,10 @@ public class Channel implements Parcelable {
         return id;
     }
 
+    public void setId(long id) {
+        this.id = id;
+    }
+
     public String getName() {
         return name;
     }
@@ -45,7 +49,7 @@ public class Channel implements Parcelable {
         return streamUrls;
     }
 
-    public void setStreamUrls(List<StreamData> streamUrls) {
+    public void setStreamDataList(List<StreamData> streamUrls) {
         this.streamUrls = streamUrls;
     }
 

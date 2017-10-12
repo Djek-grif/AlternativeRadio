@@ -1,7 +1,8 @@
 package com.djekgrif.alternativeradio.network;
 
+import com.djekgrif.alternativeradio.common.Logger;
+
 import rx.Subscriber;
-import timber.log.Timber;
 
 /**
  * Created by djek-grif on 1/8/17.
@@ -13,7 +14,7 @@ public class SimpleSubscriber <T> extends Subscriber<T> {
 
     @Override
     public void onError(Throwable e) {
-        Timber.e(e, "Error of subscriber");
+        Logger.e(e, "Error of subscriber");
     }
 
     @Override

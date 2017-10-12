@@ -51,11 +51,26 @@
 -keep class org.apache.james.mime4j.* { *; }
 -keep class javax.inject.* { *; }
 
+#Jsoup
+-keeppackagenames org.jsoup.nodes
+-keep public class org.jsoup.** {
+public *;
+}
+
 # Retrofit
 -dontwarn retrofit2.**
 -keep class retrofit2.** { *; }
 -keepattributes Signature
 -keepattributes Exceptions
+-dontnote retrofit2.Platform
+-dontwarn retrofit2.Platform$Java8
+
+# OkHttp
+-keepattributes Signature
+-keepattributes *Annotation*
+-keep class okhttp3.** { *; }
+-keep interface okhttp3.** { *; }
+-dontwarn okhttp3.**
 
 # Joda
 -dontwarn org.joda.convert.**
@@ -132,6 +147,10 @@
 -keepclassmembers class rx.internal.util.unsafe.BaseLinkedQueueConsumerNodeRef {
     rx.internal.util.atomic.LinkedQueueNode consumerNode;
 }
+
+-keep class rx.** { * ; }
+
+
 
 # Common ==================================================
 

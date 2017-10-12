@@ -1,4 +1,4 @@
-package com.djekgrif.alternativeradio.presenter;
+package com.djekgrif.alternativeradio.ui.presenter;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -14,6 +14,8 @@ import com.djekgrif.alternativeradio.ui.adapters.ItemSelectListener;
 public interface HomeFragmentPresenter extends BasePresenter{
     void onActivityCreated(@Nullable Bundle savedInstanceState);
     void onClickActionButton();
+    void onClickShare(String songInfo);
+    void onClickTextButton();
     boolean onBackPressed();
     void onDestroy();
     boolean onOptionsItemSelected(MenuItem menuItem);

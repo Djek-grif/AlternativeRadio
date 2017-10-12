@@ -18,9 +18,10 @@ import retrofit2.converter.gson.GsonConverterFactory;
 /**
  * Created by djek-grif on 5/27/16.
  */
-@Module (includes = NetworkModule.class)
+@Module(includes = NetworkModule.class)
 public class ApiModule {
 
+    public static final String RADIO_PLAYER_URL = "http://radiopleer.com";
     public static final String USER_AGENT_DEFAULT = "User-Agent: Mozilla/5.0 (X11; Linux i686) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/46.0.2490.76 Safari/537.36";
 
     @Provides
@@ -28,7 +29,7 @@ public class ApiModule {
     Retrofit provideRestAdapter(OkHttpClient client, Gson gson) {
         return new Retrofit.Builder()
                 .client(client)
-                .baseUrl(ApiServiceImp.RADIO_PLAYER_URL)
+                .baseUrl(RADIO_PLAYER_URL)
                 .addConverterFactory(GsonConverterFactory.create(gson))
                 .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
                 .build();
@@ -51,4 +52,5 @@ public class ApiModule {
     ApiService provideApiService(RadioInfoService radioInfoService, SongInfoService songInfoService){
         return new ApiServiceImp(radioInfoService, songInfoService);
     }
+
 }

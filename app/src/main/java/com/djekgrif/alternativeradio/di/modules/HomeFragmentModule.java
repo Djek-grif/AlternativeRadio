@@ -1,9 +1,8 @@
 package com.djekgrif.alternativeradio.di.modules;
 
-import com.djekgrif.alternativeradio.di.ActivityScope;
 import com.djekgrif.alternativeradio.manager.ImageLoader;
-import com.djekgrif.alternativeradio.presenter.HomeFragmentPresenter;
-import com.djekgrif.alternativeradio.presenter.HomeFragmentPresenterImp;
+import com.djekgrif.alternativeradio.ui.presenter.HomeFragmentPresenter;
+import com.djekgrif.alternativeradio.ui.presenter.HomeFragmentPresenterImp;
 import com.djekgrif.alternativeradio.view.HomeFragmentView;
 
 import dagger.Module;
@@ -22,7 +21,6 @@ public class HomeFragmentModule {
     }
 
     @Provides
-    @ActivityScope
     public HomeFragmentPresenter provideHomeFragmentPresenter(ImageLoader imageLoader){
         return new HomeFragmentPresenterImp(homeFragmentView, imageLoader);
     }

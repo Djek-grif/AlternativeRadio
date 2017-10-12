@@ -1,14 +1,19 @@
 <resources>
-    <string name="app_name">Alternative Radio</string>
+    <string name="app_name">Karaoke Radio</string>
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="press_again_exit">Press again to exit</string>
     <string name="stations">Stations</string>
-    <string name="recently_track_format" formatted="false"> - %s</string>
+    <string name="recently_track_format" formatted="false">%s - %s</string>
+    <string name="copy_to_clipboard">Copy to clipboard</string>
 
     <string name="action_settings">Settings</string>
     <string name="pause">Pause</string>
     <string name="play">Play</string>
     <string name="kbs">%skb/s</string>
+    <string name="sorry_no_results">Sorry, your search returned no results</string>
+    <string name="connection_problem">Connection problem</string>
+    <string name="no_connection">No internet connection. Please check your connection settings and try again</string>
+    <string name="retry">Retry</string>
 </resources>

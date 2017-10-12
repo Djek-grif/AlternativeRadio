@@ -2,9 +2,7 @@ package com.djekgrif.alternativeradio.common;
 
 import android.app.PendingIntent;
 import android.content.ComponentName;
-import android.content.Context;
 import android.content.Intent;
-import android.media.AudioManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -28,9 +26,10 @@ import com.djekgrif.alternativeradio.manager.NotificationManager;
 import com.djekgrif.alternativeradio.manager.Preferences;
 import com.djekgrif.alternativeradio.network.ApiService;
 import com.djekgrif.alternativeradio.network.model.ConfigurationData;
-import com.djekgrif.alternativeradio.network.model.RecentlyItem;
 import com.djekgrif.alternativeradio.network.model.SongInfoDetails;
+import com.djekgrif.alternativeradio.ui.model.HomeListItem;
 import com.google.android.exoplayer2.DefaultLoadControl;
+import com.google.android.exoplayer2.ExoPlaybackException;
 import com.google.android.exoplayer2.ExoPlayerFactory;
 import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory;
 import com.google.android.exoplayer2.extractor.ExtractorsFactory;
@@ -51,8 +50,6 @@ import org.greenrobot.eventbus.Subscribe;
 import java.util.List;
 
 import javax.inject.Inject;
-
-import timber.log.Timber;
 
 /**
  * Created by djek-grif on 10/20/16.
@@ -105,7 +102,7 @@ public class StreamService extends BaseStreamService {
                     }
 
                     @Override
-                    public void updateRecentlyList(List<RecentlyItem> recentlyItems) {
+                    public void updateRecentlyList(List<HomeListItem> recentlyItems) {
                         EventBus.getDefault().post(new UpdateRecentlyListEvent(recentlyItems));
                     }
                 });
@@ -132,14 +129,20 @@ public class StreamService extends BaseStreamService {
         player.release();
         NotificationManager.removeNotifications();
         streamDataUpdater.stopSoundInfoUpdater();
-        Timber.d("Destroy Stream service");
+        Logger.d("Destroy Stream service", Logger.LIFECYCLE);
     }
 
 
     private void initPlayer() {
         TrackSelector trackSelector = new DefaultTrackSelector(new Handler());
-        player = ExoPlayerFactory.newSimpleInstance(getApplication(), trackSelector, new DefaultLoadControl());
-        PlayerLogger eventLogger = new PlayerLogger();
+        player = ExoPlayerFactory.newSimpleInstance(getApplication(), trackSelector, new DefaultLoadControl());//new DefaultLoadControl(new DefaultAllocator(true, C.DEFAULT_BUFFER_SEGMENT_SIZE)));
+        PlayerLogger eventLogger = new PlayerLogger() {
+            @Override
+            public void onPlayerError(ExoPlaybackException error) {
+                super.onPlayerError(error);
+                stopPlay();
+            }
+        };
         player.setAudioDebugListener(eventLogger);
 //        player.setVideoDebugListener(eventLogger);
 //        player.setId3Output(eventLogger);
@@ -197,6 +200,7 @@ public class StreamService extends BaseStreamService {
 
     private void stopPlay() {
         if (player.getPlayWhenReady()) {
+            unregisterAudioFocusListener();
             streamDataUpdater.stopSoundInfoUpdater();
             player.setPlayWhenReady(false);
             setMediaPlaybackState(PlaybackStateCompat.STATE_STOPPED);
@@ -207,7 +211,7 @@ public class StreamService extends BaseStreamService {
     }
 
     private void startPlay() {
-        if (isSuccessfullyRetrievedAudioFocus() && streamDataUpdater.isCurrentStreamDataValid()) {
+        if (isAudioFocus() && streamDataUpdater.isCurrentStreamDataValid()) {
             mediaSessionCompat.setActive(true);
             setMediaPlaybackState(PlaybackStateCompat.STATE_PLAYING);
             NotificationManager.showPlayingNotification(mediaSessionCompat);
@@ -242,13 +246,6 @@ public class StreamService extends BaseStreamService {
         player.prepare(mediaSource);
     }
 
-    private boolean isSuccessfullyRetrievedAudioFocus() {
-        AudioManager audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
-        audioManager.abandonAudioFocus(onAudioFocusChangeListener);
-        int result = audioManager.requestAudioFocus(onAudioFocusChangeListener, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN);
-        return result == AudioManager.AUDIOFOCUS_GAIN;
-    }
-
     @Subscribe
     public void updateConfigurationData(UpdateConfigurationDataEvent event){
         streamDataUpdater.updateConfigurationData();
@@ -270,7 +267,7 @@ public class StreamService extends BaseStreamService {
             streamDataUpdater.setCurrentChannel(changedEvent.getChannel());
             streamDataUpdater.setCurrentStreamData(changedEvent.getChannel().getStreamUrls().get(changedEvent.getChannel().getStreamUrls().size() > 1 ? 1 : 0));
             startPlay();
-            Timber.d("Channel changed to: %s", String.valueOf(changedEvent.getChannel().getName()));
+            Logger.d("Channel changed to: " + String.valueOf(changedEvent.getChannel().getName()), Logger.STREAM);
         }
     }
 
