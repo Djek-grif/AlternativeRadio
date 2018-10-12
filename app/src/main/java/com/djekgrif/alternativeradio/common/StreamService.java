@@ -22,7 +22,7 @@ import com.djekgrif.alternativeradio.common.events.UpdateSongInfoDetailsEvent;
 import com.djekgrif.alternativeradio.common.events.UpdateStationsStateEvent;
 import com.djekgrif.alternativeradio.manager.ConfigurationManager;
 import com.djekgrif.alternativeradio.manager.ImageLoader;
-import com.djekgrif.alternativeradio.manager.NotificationManager;
+import com.djekgrif.alternativeradio.manager.NotificationHelper;
 import com.djekgrif.alternativeradio.manager.Preferences;
 import com.djekgrif.alternativeradio.network.ApiService;
 import com.djekgrif.alternativeradio.network.model.ConfigurationData;
@@ -85,19 +85,19 @@ public class StreamService extends BaseStreamService {
 
                     @Override
                     public void updateConfiguration(ConfigurationData configurationData) {
-                        NotificationManager.initMediaSessionMetadata(mediaSessionCompat);
-//                        NotificationManager.showStopNotification(mediaSessionCompat);
+                        NotificationHelper.initMediaSessionMetadata(mediaSessionCompat);
+//                        NotificationHelper.showStopNotification(mediaSessionCompat);
                         EventBus.getDefault().post(new UpdateStationsStateEvent(configurationData.getStations()));
                         streamDataUpdater.updateSoundInfo();
                     }
 
                     @Override
                     public void updateData(SongInfoDetails songInfoDetails) {
-                        NotificationManager.updateMediaSessionMetadata(mediaSessionCompat,
+                        NotificationHelper.updateMediaSessionMetadata(mediaSessionCompat,
                                 songInfoDetails.getArtistName(), songInfoDetails.getTrackName(), songInfoDetails.getArtworkUrl100(), imageLoader);
                         EventBus.getDefault().post(new UpdateSongInfoDetailsEvent(songInfoDetails));
                         if (player.getPlayWhenReady()) {
-                            NotificationManager.showPlayingNotification(mediaSessionCompat);
+                            NotificationHelper.showPlayingNotification(mediaSessionCompat);
                         }
                     }
 
@@ -127,7 +127,7 @@ public class StreamService extends BaseStreamService {
         EventBus.getDefault().unregister(this);
         player.stop();
         player.release();
-        NotificationManager.removeNotifications();
+        NotificationHelper.removeNotifications();
         streamDataUpdater.stopSoundInfoUpdater();
         Logger.d("Destroy Stream service", Logger.LIFECYCLE);
     }
@@ -171,7 +171,7 @@ public class StreamService extends BaseStreamService {
                 super.onCustomAction(action, extras);
                 if (CUSTOM_EXIT_ACTION.equals(action)) {
                     stopPlay();
-                    NotificationManager.removeNotifications();
+                    NotificationHelper.removeNotifications();
                     stopSelf();
                 } else if (CUSTOM_CHANGE_STREAM_STATE.equals(action)) {
                     if (player.getPlayWhenReady()) {
@@ -204,8 +204,8 @@ public class StreamService extends BaseStreamService {
             streamDataUpdater.stopSoundInfoUpdater();
             player.setPlayWhenReady(false);
             setMediaPlaybackState(PlaybackStateCompat.STATE_STOPPED);
-//            NotificationManager.showStopNotification(mediaSessionCompat);
-            NotificationManager.removeNotifications();
+//            NotificationHelper.showStopNotification(mediaSessionCompat);
+            NotificationHelper.removeNotifications();
             EventBus.getDefault().post(new StopPlayEvent());
         }
     }
@@ -214,7 +214,7 @@ public class StreamService extends BaseStreamService {
         if (isAudioFocus() && streamDataUpdater.isCurrentStreamDataValid()) {
             mediaSessionCompat.setActive(true);
             setMediaPlaybackState(PlaybackStateCompat.STATE_PLAYING);
-            NotificationManager.showPlayingNotification(mediaSessionCompat);
+            NotificationHelper.showPlayingNotification(mediaSessionCompat);
             preparePlayer(streamDataUpdater.getUriFromCurrentStreamData());
             player.setPlayWhenReady(true);
             EventBus.getDefault().post(new StartPlayEvent());

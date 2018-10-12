@@ -278,12 +278,12 @@ public class HomeFragment extends BaseFragment implements HomeFragmentView {
 
     @Override
     public void setSupportMediaController(MediaControllerCompat mediaController) {
-        getActivity().setSupportMediaController(mediaController);
+        MediaControllerCompat.setMediaController(getActivity(), mediaController);
     }
 
     @Override
     public MediaControllerCompat getSupportMediaController(){
-        return getActivity().getSupportMediaController();
+        return MediaControllerCompat.getMediaController(getActivity());
     }
 
     @Override

@@ -1,5 +1,7 @@
 package com.djekgrif.alternativeradio.network;
 
+import android.text.TextUtils;
+
 import com.djekgrif.alternativeradio.common.Logger;
 import com.djekgrif.alternativeradio.network.model.ConfigurationData;
 import com.djekgrif.alternativeradio.network.model.RecentlyItem;
@@ -78,10 +80,12 @@ public class ApiServiceBase implements ApiService {
                             int indexFirstSpace = line.indexOf(" ");
                             String time = line.substring(0, indexFirstSpace);
                             line = line.substring(indexFirstSpace, line.length());
-                            int indexDash = line.indexOf("-");
-                            String name = line.substring(0, indexDash);
-                            String track = line.substring(indexDash + 1, line.length());
-                            recentlyItems.add(new RecentlyItem(name, track, time));
+                            if(line.contains("-")) {
+                                int indexDash = line.indexOf("-");
+                                String name = indexDash > 0 ? line.substring(0, indexDash) : line;
+                                String track = line.substring(indexDash + 1, line.length());
+                                recentlyItems.add(new RecentlyItem(name, track, time));
+                            }
                         }
                     } catch (IOException e) {
                         e.printStackTrace();

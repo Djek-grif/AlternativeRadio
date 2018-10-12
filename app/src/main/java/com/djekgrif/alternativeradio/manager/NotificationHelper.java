@@ -1,10 +1,15 @@
 package com.djekgrif.alternativeradio.manager;
 
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
+import android.support.v4.app.NotificationCompat;
+import android.support.v4.media.app.NotificationCompat.MediaStyle;
 import android.support.v4.app.NotificationManagerCompat;
 import android.support.v4.media.MediaDescriptionCompat;
 import android.support.v4.media.MediaMetadataCompat;
@@ -12,7 +17,6 @@ import android.support.v4.media.session.MediaButtonReceiver;
 import android.support.v4.media.session.MediaControllerCompat;
 import android.support.v4.media.session.MediaSessionCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
-import android.support.v7.app.NotificationCompat;
 
 import com.djekgrif.alternativeradio.App;
 import com.djekgrif.alternativeradio.R;
@@ -25,9 +29,11 @@ import com.djekgrif.alternativeradio.utils.DeviceUtils;
  * Created by djek-grif on 11/15/16.
  */
 
-public class NotificationManager {
+public class NotificationHelper {
 
     private static final int NOTIFICATION_ID = 232451;
+    private static final String CHANNEL_ID = "media_playback_channel";
+    private static final String CHANNEL_NAME = "radio_channel_256";
 
     public static void initMediaSessionMetadata(MediaSessionCompat mediaSessionCompat){
         MediaMetadataCompat.Builder metadataBuilder = new MediaMetadataCompat.Builder();
@@ -58,6 +64,16 @@ public class NotificationManager {
     }
 
     public static void showPlayingNotification(MediaSessionCompat mediaSessionCompat) {
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+            NotificationManager notificationManager = (NotificationManager) App.getInstance().getSystemService(Context.NOTIFICATION_SERVICE);
+            NotificationChannel notificationChannel = new NotificationChannel(CHANNEL_ID, CHANNEL_NAME, NotificationManager.IMPORTANCE_LOW);
+            notificationChannel.enableLights(true);
+            notificationChannel.setLightColor(Color.RED);
+            notificationChannel.enableVibration(true);
+            notificationChannel.setVibrationPattern(new long[]{100, 200, 300, 400, 500, 400, 300, 200, 400});
+            notificationManager.createNotificationChannel(notificationChannel);
+        }
+
         NotificationCompat.Builder builder = getBuilder(App.getInstance(), mediaSessionCompat);
             builder.addAction(new NotificationCompat.Action(android.R.drawable.ic_media_pause,
                     App.getInstance().getString(R.string.pause),
@@ -96,9 +112,9 @@ public class NotificationManager {
 //        openUI.putExtra(MusicPlayerActivity.EXTRA_CURRENT_MEDIA_DESCRIPTION, mediaSession);
         PendingIntent openUIPendingIntent = PendingIntent.getActivity(context, 100, openUI, PendingIntent.FLAG_CANCEL_CURRENT);
 
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(context);
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CHANNEL_ID);
         builder
-                .setStyle(new NotificationCompat.MediaStyle().setShowActionsInCompactView(0).setMediaSession(mediaSession.getSessionToken()))
+                .setStyle(new MediaStyle().setShowActionsInCompactView(0).setMediaSession(mediaSession.getSessionToken()))
                 .setShowWhen(false)
                 .setContentTitle(description.getTitle())
                 .setContentText(description.getSubtitle())
