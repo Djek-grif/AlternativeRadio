@@ -3,6 +3,7 @@ package com.djekgrif.alternativeradio.manager;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
@@ -63,7 +64,7 @@ public class NotificationHelper {
         });
     }
 
-    public static void showPlayingNotification(MediaSessionCompat mediaSessionCompat) {
+    public static void showPlayingNotification(MediaSessionCompat mediaSessionCompat, Service service) {
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
             NotificationManager notificationManager = (NotificationManager) App.getInstance().getSystemService(Context.NOTIFICATION_SERVICE);
             NotificationChannel notificationChannel = new NotificationChannel(CHANNEL_ID, CHANNEL_NAME, NotificationManager.IMPORTANCE_LOW);
@@ -79,7 +80,8 @@ public class NotificationHelper {
                     App.getInstance().getString(R.string.pause),
                     MediaButtonReceiver.buildMediaButtonPendingIntent(App.getInstance(), PlaybackStateCompat.ACTION_STOP)));
             builder.setSmallIcon(DeviceUtils.isLollipopOrHigher() ? R.drawable.ic_service_transparent : R.drawable.ic_service);
-            NotificationManagerCompat.from(App.getInstance()).notify(NOTIFICATION_ID, builder.build());
+//            NotificationManagerCompat.from(App.getInstance()).notify(NOTIFICATION_ID, builder.build());
+        service.startForeground(NOTIFICATION_ID, builder.build());
     }
 
     public static void showStopNotification(MediaSessionCompat mediaSessionCompat) {
@@ -93,8 +95,9 @@ public class NotificationHelper {
         }
     }
 
-    public static void removeNotifications() {
-        NotificationManagerCompat.from(App.getInstance()).cancelAll();
+    public static void removeNotifications(Service service) {
+        service.stopForeground(true);
+//        NotificationManagerCompat.from(App.getInstance()).cancelAll();
     }
 
     private static NotificationCompat.Builder getBuilder(Context context, MediaSessionCompat mediaSession) {

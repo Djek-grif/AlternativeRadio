@@ -264,8 +264,8 @@ public class HomeFragment extends BaseFragment implements HomeFragmentView {
 
     @Override
     public boolean closeDrawer() {
-        if(drawer.isDrawerOpen(Gravity.LEFT)){
-            drawer.closeDrawer(Gravity.LEFT);
+        if(drawer.isDrawerOpen(Gravity.START)){
+            drawer.closeDrawer(Gravity.START);
             return true;
         }
         return false;

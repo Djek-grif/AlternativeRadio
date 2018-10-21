@@ -97,7 +97,7 @@ public class StreamService extends BaseStreamService {
                                 songInfoDetails.getArtistName(), songInfoDetails.getTrackName(), songInfoDetails.getArtworkUrl100(), imageLoader);
                         EventBus.getDefault().post(new UpdateSongInfoDetailsEvent(songInfoDetails));
                         if (player.getPlayWhenReady()) {
-                            NotificationHelper.showPlayingNotification(mediaSessionCompat);
+                            NotificationHelper.showPlayingNotification(mediaSessionCompat, StreamService.this);
                         }
                     }
 
@@ -127,7 +127,7 @@ public class StreamService extends BaseStreamService {
         EventBus.getDefault().unregister(this);
         player.stop();
         player.release();
-        NotificationHelper.removeNotifications();
+        NotificationHelper.removeNotifications(this);
         streamDataUpdater.stopSoundInfoUpdater();
         Logger.d("Destroy Stream service", Logger.LIFECYCLE);
     }
@@ -171,7 +171,7 @@ public class StreamService extends BaseStreamService {
                 super.onCustomAction(action, extras);
                 if (CUSTOM_EXIT_ACTION.equals(action)) {
                     stopPlay();
-                    NotificationHelper.removeNotifications();
+                    NotificationHelper.removeNotifications(StreamService.this);
                     stopSelf();
                 } else if (CUSTOM_CHANGE_STREAM_STATE.equals(action)) {
                     if (player.getPlayWhenReady()) {
@@ -205,7 +205,7 @@ public class StreamService extends BaseStreamService {
             player.setPlayWhenReady(false);
             setMediaPlaybackState(PlaybackStateCompat.STATE_STOPPED);
 //            NotificationHelper.showStopNotification(mediaSessionCompat);
-            NotificationHelper.removeNotifications();
+            NotificationHelper.removeNotifications(this);
             EventBus.getDefault().post(new StopPlayEvent());
         }
     }
@@ -214,7 +214,7 @@ public class StreamService extends BaseStreamService {
         if (isAudioFocus() && streamDataUpdater.isCurrentStreamDataValid()) {
             mediaSessionCompat.setActive(true);
             setMediaPlaybackState(PlaybackStateCompat.STATE_PLAYING);
-            NotificationHelper.showPlayingNotification(mediaSessionCompat);
+            NotificationHelper.showPlayingNotification(mediaSessionCompat, this);
             preparePlayer(streamDataUpdater.getUriFromCurrentStreamData());
             player.setPlayWhenReady(true);
             EventBus.getDefault().post(new StartPlayEvent());

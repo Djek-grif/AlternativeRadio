@@ -119,60 +119,6 @@ public class HomeFragmentPresenterImp implements HomeFragmentPresenter {
         EventBus.getDefault().register(this);
     }
 
-//    private void parseStations() {
-//        Observable.just("radio_db_parse.json")
-//                .subscribeOn(Schedulers.io())
-//                .map(file -> {
-//                    try {
-//                        String result = getStringFromStream(App.getInstance().getAssets().open(file), null);
-//                        JSONObject jsonObject = new JSONObject(result);
-//                        JSONArray elements = jsonObject.getJSONArray("children");
-//                        for (int i = 0; i < elements.length(); i++) {
-//                            JSONObject stationData = elements.getJSONObject(i);
-//                            JSONArray stationArray = stationData.getJSONArray("children");
-//                            JSONObject object = stationArray.getJSONObject(0);
-//                            String streamUrl = object.getString("data-href");
-//                            String name = object.getString("data-title");
-//                            String rel = object.getString("rel");
-//                            JSONArray extraDataArray = object.getJSONArray("children");
-//                            String image = extraDataArray.getJSONObject(0).getString("src");
-//                            Log.d("Item", "streamUrl:" + streamUrl + "\nname:" + name + "\nimage:" + image );
-//
-//                        }
-//                    } catch (Exception e) {
-//                        e.printStackTrace();
-//                    }
-//                    return "";
-//                })
-//        .subscribe();
-//    }
-//
-//    public static String getStringFromStream(InputStream input, Predicate<String> filter) {
-//        BufferedReader reader = null;
-//        filter = filter == null ? data -> true : filter;
-//        try {
-//            String line;
-//            reader = new BufferedReader(new InputStreamReader(input));
-//            StringBuilder stringBuilder = new StringBuilder();
-//            while ((line = reader.readLine()) != null) {
-//                if (filter.apply(line)) {
-//                    stringBuilder.append(line);
-//                }
-//            }
-//            return stringBuilder.toString();
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        } finally {
-//            if (reader != null) {
-//                try {
-//                    reader.close();
-//                } catch (IOException e) {
-//                    e.printStackTrace();
-//                }
-//            }
-//        }
-//        return null;
-//    }
 
     @Override
     public void onStop() {

@@ -18,7 +18,7 @@ import java.util.List;
  * Created by djek-grif on 2/21/17.
  */
 
-public class BaseStreamService extends MediaBrowserServiceCompat {
+public abstract class BaseStreamService extends MediaBrowserServiceCompat {
 
     protected SimpleExoPlayer player;
     protected AudioManager audioManager;
