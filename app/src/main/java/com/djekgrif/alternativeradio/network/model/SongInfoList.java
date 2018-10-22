@@ -13,13 +13,13 @@ public class SongInfoList {
     @SerializedName("resultCount")
     private int resultCount;
     @SerializedName("results")
-    private List<SongInfoDetails> results;
+    private List<SearchInfoDetails> results;
 
     public int getResultCount() {
         return resultCount;
     }
 
-    public List<SongInfoDetails> getResults() {
+    public List<SearchInfoDetails> getResults() {
         return results;
     }
 }

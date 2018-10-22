@@ -74,9 +74,9 @@ public *;
 
 # Joda
 -dontwarn org.joda.convert.**
--dontwarn org.joda.time.**
--keep class org.joda.time.** { *; }
--keep interface org.joda.time.** { *; }
+-dontwarn org.joda.image.**
+-keep class org.joda.image.** { *; }
+-keep interface org.joda.image.** { *; }
 
 # ButterKnife
 -keep class butterknife.** { *; }

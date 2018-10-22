@@ -6,7 +6,8 @@ import android.text.TextUtils;
 import com.djekgrif.alternativeradio.common.Logger;
 import com.djekgrif.alternativeradio.common.events.SongTextItemEvent;
 import com.djekgrif.alternativeradio.network.SimpleSubscriber;
-import com.djekgrif.alternativeradio.network.model.SongInfoDetails;
+import com.djekgrif.alternativeradio.network.model.CurrentTrackInfo;
+import com.djekgrif.alternativeradio.network.model.SearchInfoDetails;
 import com.djekgrif.alternativeradio.network.model.SongTextInfoItem;
 import com.djekgrif.alternativeradio.network.model.SongTextItem;
 import com.djekgrif.alternativeradio.ui.utils.StringUtils;
@@ -35,14 +36,14 @@ public class SongTextHelper {
     private static final String SEARCH_TEXT_LINK = "http://search.azlyrics.com/search.php?q=";
     private static Subscription searchTextSubscription;
 
-    public static void searchTextOfSong(final SongInfoDetails songInfoDetails) {
+    public static void searchTextOfSong(final CurrentTrackInfo currentTrackInfo) {
         if (searchTextSubscription != null) {
             if (!searchTextSubscription.isUnsubscribed()) {
                 searchTextSubscription.unsubscribe();
             }
         }
-        String trackName = StringUtils.cleanSongInfoString(songInfoDetails.getTrackName());
-        String artistName = StringUtils.cleanSongInfoString(songInfoDetails.getArtistName());
+        String trackName = StringUtils.cleanSongInfoString(currentTrackInfo.getTrackName());
+        String artistName = StringUtils.cleanSongInfoString(currentTrackInfo.getArtistName());
         searchTextSubscription = Observable.just(SEARCH_TEXT_LINK + URLEncoder.encode(TextUtils.join(" ", new String[]{artistName, trackName})))
                 .map(link -> {
                     try {
@@ -123,14 +124,14 @@ public class SongTextHelper {
                     @Override
                     public void onError(Throwable e) {
                         Logger.e(e, "Error of getting text");
-                        EventBus.getDefault().post(new SongTextItemEvent(null, songInfoDetails));
+                        EventBus.getDefault().post(new SongTextItemEvent(null, currentTrackInfo));
                         searchTextSubscription = null;
                     }
 
                     @Override
                     public void onNext(SongTextItem result) {
                         Logger.d("Song text is:" + result.getText());
-                        EventBus.getDefault().post(new SongTextItemEvent(result, songInfoDetails));
+                        EventBus.getDefault().post(new SongTextItemEvent(result, currentTrackInfo));
                         searchTextSubscription = null;
                     }
                 });

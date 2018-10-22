@@ -150,7 +150,7 @@ public class HomeFragment extends BaseFragment implements HomeFragmentView {
 
         recentlyList.setLayoutManager(new LinearLayoutManager(getActivity()));
         recentlyList.setHasFixedSize(true);
-        recentlyListAdapter = new HomeRecyclerViewAdapter();
+        recentlyListAdapter = new HomeRecyclerViewAdapter(imageLoader);
         recentlyList.setAdapter(recentlyListAdapter);
 
         stationList.setLayoutManager(new LinearLayoutManager(getActivity()));

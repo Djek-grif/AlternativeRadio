@@ -2,12 +2,7 @@ package com.djekgrif.alternativeradio.network.model;
 
 import com.google.gson.annotations.SerializedName;
 
-import java.util.List;
-
-/**
- * Created by djek-grif on 5/31/16.
- */
-public class SongInfo {
+public class PrevSongInfo {
 
     @SerializedName("artist")
     private String artist;
@@ -25,8 +20,6 @@ public class SongInfo {
     private String googleUrl;
     @SerializedName("youtube_url")
     private String youtubeUrl;
-    @SerializedName("prev_tracks")
-    private List<PrevSongInfo> prevTracks;
     @SerializedName("last_modified")
     private String lastModified;
 
@@ -50,6 +43,10 @@ public class SongInfo {
         return cover;
     }
 
+    public void setCover(String cover) {
+        this.cover = cover;
+    }
+
     public String getItunesUrl() {
         return itunesUrl;
     }
@@ -60,10 +57,6 @@ public class SongInfo {
 
     public String getYoutubeUrl() {
         return youtubeUrl;
-    }
-
-    public List<PrevSongInfo> getPrevTracks() {
-        return prevTracks;
     }
 
     public String getLastModified() {

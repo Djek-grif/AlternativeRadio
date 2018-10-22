@@ -9,17 +9,20 @@
     android:paddingBottom="@dimen/default_micro"
     android:background="@color/colorPrimary"
     android:orientation="horizontal">
-    <TextView
-        android:id="@+id/list_item_recently_time"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+    <ImageView
+        android:id="@+id/list_item_recently_img"
+        android:layout_width="@dimen/default_large"
+        android:layout_height="@dimen/default_large"
         android:layout_marginRight="@dimen/default_smaller"
         style="@style/Widget.Text.Description"
-        tools:text="12.35"/>
+        android:background="@color/colorForeground"
+        tools:src="@mipmap/ic_launcher"/>
     <TextView
         android:id="@+id/list_item_recently_track"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:layout_marginLeft="@dimen/default_small"
         android:maxLines="2"
         android:ellipsize="end"
         android:layout_marginRight="@dimen/default_smaller"

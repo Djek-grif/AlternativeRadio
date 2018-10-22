@@ -13,12 +13,12 @@ public class RecentlyItem implements Parcelable, HomeListItem {
 
     private String artistName;
     private String trackName;
-    private String time;
+    private String image;
 
-    public RecentlyItem(String artistName, String trackName, String time) {
+    public RecentlyItem(String artistName, String trackName, String image) {
         this.artistName = artistName;
         this.trackName = trackName;
-        this.time = time;
+        this.image = image;
     }
 
     public String getArtistName() {
@@ -29,8 +29,8 @@ public class RecentlyItem implements Parcelable, HomeListItem {
         return trackName;
     }
 
-    public String getTime() {
-        return time;
+    public String getImage() {
+        return image;
     }
 
 
@@ -48,13 +48,13 @@ public class RecentlyItem implements Parcelable, HomeListItem {
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(this.artistName);
         dest.writeString(this.trackName);
-        dest.writeString(this.time);
+        dest.writeString(this.image);
     }
 
     protected RecentlyItem(Parcel in) {
         this.artistName = in.readString();
         this.trackName = in.readString();
-        this.time = in.readString();
+        this.image = in.readString();
     }
 
     public static final Parcelable.Creator<RecentlyItem> CREATOR = new Parcelable.Creator<RecentlyItem>() {

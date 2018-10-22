@@ -8,7 +8,7 @@ import com.google.gson.annotations.SerializedName;
 /**
  * Created by djek-grif on 7/20/16.
  */
-public class SongInfoDetails implements Parcelable {
+public class SearchInfoDetails implements Parcelable {
 
     @SerializedName("artistName")
     private String artistName;
@@ -78,10 +78,10 @@ public class SongInfoDetails implements Parcelable {
         dest.writeString(this.artworkUrl100);
     }
 
-    public SongInfoDetails() {
+    public SearchInfoDetails() {
     }
 
-    protected SongInfoDetails(Parcel in) {
+    protected SearchInfoDetails(Parcel in) {
         this.artistName = in.readString();
         this.trackName = in.readString();
         this.trackCensoredName = in.readString();
@@ -91,15 +91,15 @@ public class SongInfoDetails implements Parcelable {
         this.artworkUrl100 = in.readString();
     }
 
-    public static final Parcelable.Creator<SongInfoDetails> CREATOR = new Parcelable.Creator<SongInfoDetails>() {
+    public static final Parcelable.Creator<SearchInfoDetails> CREATOR = new Parcelable.Creator<SearchInfoDetails>() {
         @Override
-        public SongInfoDetails createFromParcel(Parcel source) {
-            return new SongInfoDetails(source);
+        public SearchInfoDetails createFromParcel(Parcel source) {
+            return new SearchInfoDetails(source);
         }
 
         @Override
-        public SongInfoDetails[] newArray(int size) {
-            return new SongInfoDetails[size];
+        public SearchInfoDetails[] newArray(int size) {
+            return new SearchInfoDetails[size];
         }
     };
 }

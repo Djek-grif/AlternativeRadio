@@ -9,12 +9,16 @@ import com.djekgrif.alternativeradio.manager.Preferences;
 import com.djekgrif.alternativeradio.network.ApiService;
 import com.djekgrif.alternativeradio.network.SimpleSubscriber;
 import com.djekgrif.alternativeradio.network.model.Channel;
-import com.djekgrif.alternativeradio.network.model.SongInfoDetails;
+import com.djekgrif.alternativeradio.network.model.CurrentTrackInfo;
+import com.djekgrif.alternativeradio.network.model.PrevSongInfo;
+import com.djekgrif.alternativeradio.network.model.RecentlyItem;
+import com.djekgrif.alternativeradio.network.model.SearchInfoDetails;
 import com.djekgrif.alternativeradio.network.model.StationData;
 import com.djekgrif.alternativeradio.network.model.StreamData;
 import com.djekgrif.alternativeradio.ui.model.HomeListItem;
 import com.djekgrif.alternativeradio.ui.model.LastAppState;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -115,19 +119,25 @@ public class StreamDataUpdater {
 
     public void updateSoundInfo() {
         apiService.getCurrentSoundInfo(currentChannel.getSongInfoUrl(), searchMediaUrl)
-                .subscribe(new SimpleSubscriber<SongInfoDetails>() {
+                .subscribe(new SimpleSubscriber<CurrentTrackInfo>() {
+
                     @Override
-                    public void onNext(SongInfoDetails soundInfoResponse) {
-                        if (soundInfoResponse != null) {
-                            updateSoundInfoListener.updateData(soundInfoResponse);
-                        }
+                    public void onError(Throwable e) {
+                        Logger.e(e, "Error getting Sound Info");
                     }
-                });
-        apiService.getRecentlyList(currentChannel.getRecentlyInfoUrl())
-                .subscribe(new SimpleSubscriber<List<HomeListItem>>() {
+
                     @Override
-                    public void onNext(List<HomeListItem> recentlyItems) {
-                        updateSoundInfoListener.updateRecentlyList(recentlyItems);
+                    public void onNext(CurrentTrackInfo currentTrackInfo) {
+                        if (currentTrackInfo != null) {
+                            updateSoundInfoListener.updateData(currentTrackInfo);
+                            if(currentTrackInfo.getPrevTracks() != null && !currentTrackInfo.getPrevTracks().isEmpty()){
+                                List<HomeListItem> prevList = new ArrayList<>();
+                                for(PrevSongInfo prevSongInfo : currentTrackInfo.getPrevTracks()){
+                                    prevList.add(new RecentlyItem(prevSongInfo.getArtist(), prevSongInfo.getSong(), prevSongInfo.getCover()));
+                                }
+                                updateSoundInfoListener.updateRecentlyList(prevList);
+                            }
+                        }
                     }
                 });
     }

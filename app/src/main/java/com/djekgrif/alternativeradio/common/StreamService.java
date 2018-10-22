@@ -26,7 +26,8 @@ import com.djekgrif.alternativeradio.manager.NotificationHelper;
 import com.djekgrif.alternativeradio.manager.Preferences;
 import com.djekgrif.alternativeradio.network.ApiService;
 import com.djekgrif.alternativeradio.network.model.ConfigurationData;
-import com.djekgrif.alternativeradio.network.model.SongInfoDetails;
+import com.djekgrif.alternativeradio.network.model.CurrentTrackInfo;
+import com.djekgrif.alternativeradio.network.model.SearchInfoDetails;
 import com.djekgrif.alternativeradio.ui.model.HomeListItem;
 import com.google.android.exoplayer2.DefaultLoadControl;
 import com.google.android.exoplayer2.ExoPlaybackException;
@@ -92,10 +93,9 @@ public class StreamService extends BaseStreamService {
                     }
 
                     @Override
-                    public void updateData(SongInfoDetails songInfoDetails) {
-                        NotificationHelper.updateMediaSessionMetadata(mediaSessionCompat,
-                                songInfoDetails.getArtistName(), songInfoDetails.getTrackName(), songInfoDetails.getArtworkUrl100(), imageLoader);
-                        EventBus.getDefault().post(new UpdateSongInfoDetailsEvent(songInfoDetails));
+                    public void updateData(CurrentTrackInfo currentTrackInfo) {
+                        NotificationHelper.updateMediaSessionMetadata(mediaSessionCompat, currentTrackInfo.getArtistName(), currentTrackInfo.getTrackName(), currentTrackInfo.getImageSmall(), imageLoader);
+                        EventBus.getDefault().post(new UpdateSongInfoDetailsEvent(currentTrackInfo));
                         if (player.getPlayWhenReady()) {
                             NotificationHelper.showPlayingNotification(mediaSessionCompat, StreamService.this);
                         }

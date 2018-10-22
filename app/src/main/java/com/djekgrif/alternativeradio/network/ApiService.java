@@ -1,10 +1,7 @@
 package com.djekgrif.alternativeradio.network;
 
 import com.djekgrif.alternativeradio.network.model.ConfigurationData;
-import com.djekgrif.alternativeradio.network.model.SongInfoDetails;
-import com.djekgrif.alternativeradio.ui.model.HomeListItem;
-
-import java.util.List;
+import com.djekgrif.alternativeradio.network.model.CurrentTrackInfo;
 
 import rx.Observable;
 import rx.functions.Action1;
@@ -16,8 +13,9 @@ public interface ApiService {
 
     String FIREBASE_DATABASE_NODE_DATA = "data";
     String FIREBASE_DATABASE_NODE_STATIONS = "stations";
+    String HTTP = "http://";
+    String HTTPS = "http://";
 
-    Observable<SongInfoDetails> getCurrentSoundInfo(String radioInfoUrl, String searchUrl);
-    Observable<List<HomeListItem>> getRecentlyList(String radioInfoUrl);
+    Observable<CurrentTrackInfo> getCurrentSoundInfo(String radioInfoUrl, String searchUrl);
     void getConfigurationData(Action1<ConfigurationData> subscriber);
 }

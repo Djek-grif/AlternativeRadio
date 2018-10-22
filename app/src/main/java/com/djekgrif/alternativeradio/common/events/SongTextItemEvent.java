@@ -1,6 +1,7 @@
 package com.djekgrif.alternativeradio.common.events;
 
-import com.djekgrif.alternativeradio.network.model.SongInfoDetails;
+import com.djekgrif.alternativeradio.network.model.CurrentTrackInfo;
+import com.djekgrif.alternativeradio.network.model.SearchInfoDetails;
 import com.djekgrif.alternativeradio.network.model.SongTextItem;
 
 /**
@@ -10,18 +11,18 @@ import com.djekgrif.alternativeradio.network.model.SongTextItem;
 public class SongTextItemEvent {
 
     private SongTextItem songTextItem;
-    private SongInfoDetails songInfoDetails;
+    private CurrentTrackInfo currentTrackInfo;
 
-    public SongTextItemEvent(SongTextItem songTextItem, SongInfoDetails songInfoDetails) {
+    public SongTextItemEvent(SongTextItem songTextItem, CurrentTrackInfo currentTrackInfo) {
         this.songTextItem = songTextItem;
-        this.songInfoDetails = songInfoDetails;
+        this.currentTrackInfo = currentTrackInfo;
     }
 
     public SongTextItem getSongTextItem() {
         return songTextItem;
     }
 
-    public SongInfoDetails getSongInfoDetails() {
-        return songInfoDetails;
+    public CurrentTrackInfo getCurrentTrackInfo() {
+        return currentTrackInfo;
     }
 }

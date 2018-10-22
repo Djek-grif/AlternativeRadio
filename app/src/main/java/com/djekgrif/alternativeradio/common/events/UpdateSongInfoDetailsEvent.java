@@ -1,6 +1,6 @@
 package com.djekgrif.alternativeradio.common.events;
 
-import com.djekgrif.alternativeradio.network.model.SongInfoDetails;
+import com.djekgrif.alternativeradio.network.model.CurrentTrackInfo;
 
 /**
  * Created by djek-grif on 4/21/17.
@@ -8,9 +8,9 @@ import com.djekgrif.alternativeradio.network.model.SongInfoDetails;
 
 public class UpdateSongInfoDetailsEvent {
 
-    public UpdateSongInfoDetailsEvent(SongInfoDetails songInfoDetails) {
-        this.songInfoDetails = songInfoDetails;
-    }
+    public CurrentTrackInfo currentTrackInfo;
 
-    public SongInfoDetails songInfoDetails;
+    public UpdateSongInfoDetailsEvent(CurrentTrackInfo currentTrackInfo) {
+        this.currentTrackInfo = currentTrackInfo;
+    }
 }

@@ -1,11 +1,14 @@
 package com.djekgrif.alternativeradio.ui.adapters;
 
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.djekgrif.alternativeradio.R;
+import com.djekgrif.alternativeradio.manager.ImageLoader;
 import com.djekgrif.alternativeradio.network.model.RecentlyItem;
 import com.djekgrif.alternativeradio.network.model.SongTextItem;
 import com.djekgrif.alternativeradio.ui.model.HomeListItem;
@@ -18,6 +21,12 @@ import java.util.List;
  */
 
 public class HomeRecyclerViewAdapter extends BaseRecyclerViewSpaceAdapter<HomeListItem, HomeRecyclerViewAdapter.HomeItemHolder> {
+
+    private ImageLoader imageLoader;
+
+    public HomeRecyclerViewAdapter(ImageLoader imageLoader) {
+        this.imageLoader = imageLoader;
+    }
 
     @Override
     public HomeItemHolder onCreateItemViewHolder(ViewGroup parent, int viewType) {
@@ -38,7 +47,11 @@ public class HomeRecyclerViewAdapter extends BaseRecyclerViewSpaceAdapter<HomeLi
     private void bindRecentlyItem(HomeItemHolder holder, int position) {
         RecentlyItem recentlyItem = (RecentlyItem) dataList.get(position);
         RecentlyItemHolder recentlyItemHolder = (RecentlyItemHolder) holder;
-        recentlyItemHolder.time.setText(StringUtils.getNotNull(recentlyItem.getTime()));
+        if(!TextUtils.isEmpty(recentlyItem.getImage())) {
+            imageLoader.loadDefault(recentlyItem.getImage(), recentlyItemHolder.image, R.drawable.ic_guitar);
+        } else {
+            recentlyItemHolder.image.setImageResource(R.drawable.ic_guitar);
+        }
         recentlyItemHolder.name.setText(String.format(recentlyItemHolder.name.getResources().getString(R.string.recently_track_format),
                 StringUtils.getNotNull(recentlyItem.getArtistName()), StringUtils.getNotNull(recentlyItem.getTrackName())));
     }
@@ -108,13 +121,13 @@ public class HomeRecyclerViewAdapter extends BaseRecyclerViewSpaceAdapter<HomeLi
 
         private final TextView name;
         //        private final TextView track;
-        private final TextView time;
+        private final ImageView image;
 
         public RecentlyItemHolder(View itemView) {
             super(itemView);
             name = (TextView) itemView.findViewById(R.id.list_item_recently_track);
 //            track = (TextView) itemView.findViewById(R.id.list_item_recently_track);
-            time = (TextView) itemView.findViewById(R.id.list_item_recently_time);
+            image = (ImageView) itemView.findViewById(R.id.list_item_recently_img);
         }
     }
 }

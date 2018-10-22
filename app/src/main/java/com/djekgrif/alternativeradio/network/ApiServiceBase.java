@@ -4,9 +4,9 @@ import android.text.TextUtils;
 
 import com.djekgrif.alternativeradio.common.Logger;
 import com.djekgrif.alternativeradio.network.model.ConfigurationData;
-import com.djekgrif.alternativeradio.network.model.RecentlyItem;
-import com.djekgrif.alternativeradio.network.model.SongInfoDetails;
-import com.djekgrif.alternativeradio.ui.model.HomeListItem;
+import com.djekgrif.alternativeradio.network.model.CurrentTrackInfo;
+import com.djekgrif.alternativeradio.network.model.SongInfo;
+import com.djekgrif.alternativeradio.network.model.SearchInfoDetails;
 import com.djekgrif.alternativeradio.ui.utils.StringUtils;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -14,12 +14,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
 import java.net.URLEncoder;
-import java.util.ArrayList;
-import java.util.List;
 
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
@@ -43,55 +38,66 @@ public class ApiServiceBase implements ApiService {
     }
 
     @Override
-    public Observable<SongInfoDetails> getCurrentSoundInfo(String radioInfoUrl, String searchUrl) {
+    public Observable<CurrentTrackInfo> getCurrentSoundInfo(String radioInfoUrl, String searchUrl) {
         return radioInfoService.getSoundInfo(radioInfoUrl)
-                .doOnUnsubscribe(() -> Logger.d("Unsubscribing subscription from onCreate()", Logger.LIFECYCLE))
-                .flatMap(songInfo -> Observable.zip(Observable.just(songInfo), songInfoService.getSongDetailsInfo(
-                        String.format(searchUrl, URLEncoder.encode(StringUtils.cleanSongInfoString(songInfo.getArtist()) + " " + StringUtils.cleanSongInfoString(songInfo.getSong())))), (songInfoItem, songInfoList) -> {
-                    SongInfoDetails songInfoDetails = null;
-                    if (songInfoList != null && songInfoList.getResults() != null && !songInfoList.getResults().isEmpty()) {
-                        songInfoDetails = songInfoList.getResults().get(0);
-                    } else {
-                        Logger.w("Bad search request for " + StringUtils.cleanSongInfoString(songInfo.getArtist()), Logger.SONG_INFO);
-                        songInfoDetails = new SongInfoDetails();
-                    }
-                    songInfoDetails.setArtistName(songInfo.getArtist());
-                    songInfoDetails.setTrackName(songInfo.getSong());
-                    return songInfoDetails;
-                }))
+                .doOnUnsubscribe(() -> Logger.d("Unsubscribing subscription", Logger.LIFECYCLE))
+                .flatMap(songInfo -> TextUtils.isEmpty(songInfo.getSong()) ?
+                        getSongInfoDetailsWithImage(songInfo, searchUrl)
+                        :
+                        parseSongInfo(songInfo, radioInfoUrl)
+                )
                 .retry(2)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
     }
 
-    @Override
-    public Observable<List<HomeListItem>> getRecentlyList(String radioInfoUrl) {
-        return radioInfoService.getRecentlyList(radioInfoUrl)
-                .retry(2)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .map(response -> {
-                    BufferedReader reader = new BufferedReader(new InputStreamReader(response.byteStream()));
-                    List<HomeListItem> recentlyItems = new ArrayList<>();
-                    String line;
-                    try {
-                        while ((line = reader.readLine()) != null) {
-                            line = line.replace("<li>", "").replace("</li>", "");
-                            int indexFirstSpace = line.indexOf(" ");
-                            String time = line.substring(0, indexFirstSpace);
-                            line = line.substring(indexFirstSpace, line.length());
-                            if(line.contains("-")) {
-                                int indexDash = line.indexOf("-");
-                                String name = indexDash > 0 ? line.substring(0, indexDash) : line;
-                                String track = line.substring(indexDash + 1, line.length());
-                                recentlyItems.add(new RecentlyItem(name, track, time));
-                            }
-                        }
-                    } catch (IOException e) {
-                        e.printStackTrace();
+    private Observable<CurrentTrackInfo> parseSongInfo(SongInfo songInfo, String radioInfoUrl) {
+        String baseImageLink = radioInfoUrl.contains("/current.json") ? radioInfoUrl.replace("current.json", "") : "";
+        return Observable.just(songInfo)
+                .map(info -> {
+                    CurrentTrackInfo currentTrackInfo = new CurrentTrackInfo();
+                    currentTrackInfo.setArtistName(info.getArtist());
+                    currentTrackInfo.setTrackName(info.getSong());
+                    if(info.getCover() != null) {
+                        currentTrackInfo.setImageBig((info.getCover().contains(HTTP) || info.getCover().contains(HTTPS)) ? info.getCover() : baseImageLink + info.getCover());
                     }
-                    return recentlyItems;
-                });
+                    currentTrackInfo.setItunesUrl(info.getItunesUrl());
+                    currentTrackInfo.setAlbum(info.getAlbum());
+                    currentTrackInfo.setYoutubeUrl(info.getYoutubeUrl());
+                    currentTrackInfo.setPrevTracks(info.getPrevTracks());
+                    currentTrackInfo.setMetadata(info.getMetadata());
+                    return currentTrackInfo;
+                })
+                .flatMap(result -> Observable.from(result.getPrevTracks())
+                        .map(item -> {
+                            if(item.getCover() != null) {
+                                item.setCover((item.getCover().contains(HTTP) || item.getCover().contains(HTTPS)) ? item.getCover() : baseImageLink + item.getCover());
+                            }
+                            return item;
+                        })
+                        .toList()
+                        .map(listWithImgs -> {
+                            result.setPrevTracks(listWithImgs);
+                            return result;
+                        })
+                );
+    }
+
+    private Observable<CurrentTrackInfo> getSongInfoDetailsWithImage(SongInfo songInfo, String searchUrl) {
+        return Observable.zip(Observable.just(songInfo), songInfoService.getSongDetailsInfo(String.format(searchUrl, URLEncoder.encode(StringUtils.cleanSongInfoString(songInfo.getArtist()) + " " + StringUtils.cleanSongInfoString(songInfo.getSong())))).doOnError(e -> Logger.e("Error of getting info")), (songInfoItem, songInfoList) -> {
+            CurrentTrackInfo currentTrackInfo = new CurrentTrackInfo();
+            if (songInfoList != null && songInfoList.getResults() != null && !songInfoList.getResults().isEmpty()) {
+                SearchInfoDetails songInfoDetails = songInfoList.getResults().get(0);
+                currentTrackInfo.setImageBig(songInfoDetails.getArtworkUrl100());
+                currentTrackInfo.setArtistName(TextUtils.isEmpty(songInfoDetails.getArtistName()) ? songInfo.getArtist() : songInfoDetails.getArtistName());
+                currentTrackInfo.setTrackName(TextUtils.isEmpty(songInfoDetails.getTrackName()) ? songInfo.getSong() : songInfoDetails.getTrackName());
+            } else {
+                Logger.w("Bad search request for " + StringUtils.cleanSongInfoString(songInfo.getArtist()), Logger.SONG_INFO);
+                currentTrackInfo.setArtistName(songInfo.getArtist());
+                currentTrackInfo.setTrackName(songInfo.getSong());
+            }
+            return currentTrackInfo;
+        });
     }
 
     public <T> void getDataSnapshot(String nodeRef, Class classType, Action1<T> listener) {

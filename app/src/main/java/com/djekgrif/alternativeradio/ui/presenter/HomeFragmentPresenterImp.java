@@ -27,7 +27,7 @@ import com.djekgrif.alternativeradio.manager.DialogManager;
 import com.djekgrif.alternativeradio.manager.ImageLoader;
 import com.djekgrif.alternativeradio.manager.SongTextHelper;
 import com.djekgrif.alternativeradio.network.model.Channel;
-import com.djekgrif.alternativeradio.network.model.SongInfoDetails;
+import com.djekgrif.alternativeradio.network.model.CurrentTrackInfo;
 import com.djekgrif.alternativeradio.network.model.SongTextItem;
 import com.djekgrif.alternativeradio.network.model.StationData;
 import com.djekgrif.alternativeradio.ui.adapters.ItemSelectListener;
@@ -56,7 +56,7 @@ public class HomeFragmentPresenterImp implements HomeFragmentPresenter {
     private boolean onBackPressedFlag;
     protected HomeFragmentView homeFragmentView;
 
-    private SongInfoDetails currentSongInfoDetails;
+    private CurrentTrackInfo currentTrackInfo;
     private SongTextItem currentSongTextItem;
 
     public HomeFragmentPresenterImp(HomeFragmentView homeFragmentView, ImageLoader imageLoader) {
@@ -164,11 +164,11 @@ public class HomeFragmentPresenterImp implements HomeFragmentPresenter {
     @Override
     public void onClickTextButton() {
         if(!homeFragmentView.isSongTextOpen()) {
-            if(currentSongInfoDetails != null) {
+            if(currentTrackInfo != null) {
                 if (currentSongTextItem == null
                         || currentSongTextItem.getTitle() == null
-                        || !currentSongTextItem.getTitle().equalsIgnoreCase(currentSongInfoDetails.getTrackName())) {
-                    SongTextHelper.searchTextOfSong(currentSongInfoDetails);
+                        || !currentSongTextItem.getTitle().equalsIgnoreCase(currentTrackInfo.getTrackName())) {
+                    SongTextHelper.searchTextOfSong(currentTrackInfo);
                     homeFragmentView.showTextButtonProgress();
                 } else {
                     homeFragmentView.openSongText(currentSongTextItem);
@@ -218,17 +218,17 @@ public class HomeFragmentPresenterImp implements HomeFragmentPresenter {
 
     @Subscribe
     public void onUpdateSongInfoDetailsEvent(UpdateSongInfoDetailsEvent updateSongInfoDetails) {
-        currentSongInfoDetails = updateSongInfoDetails.songInfoDetails;
+        currentTrackInfo = updateSongInfoDetails.currentTrackInfo;
         StringBuilder songInfoString = new StringBuilder();
-        if (!TextUtils.isEmpty(currentSongInfoDetails.getArtistName())) {
-            songInfoString.append(currentSongInfoDetails.getArtistName());
+        if (!TextUtils.isEmpty(currentTrackInfo.getArtistName())) {
+            songInfoString.append(currentTrackInfo.getArtistName());
         }
-        if (!TextUtils.isEmpty(currentSongInfoDetails.getTrackName())) {
+        if (!TextUtils.isEmpty(currentTrackInfo.getTrackName())) {
             songInfoString.append(" - ");
-            songInfoString.append(currentSongInfoDetails.getTrackName());
+            songInfoString.append(currentTrackInfo.getTrackName());
         }
         homeFragmentView.updateSoundInfo(songInfoString.toString());
-        homeFragmentView.updateImage(imageLoader, currentSongInfoDetails.getArtworkUrl100());
+        homeFragmentView.updateImage(imageLoader, currentTrackInfo.getImageBig());
     }
 
     @Subscribe
