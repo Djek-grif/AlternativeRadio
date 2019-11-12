@@ -2,9 +2,10 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.djekgrif.alternativeradio">
 
-    <uses-permission android:name="android.permission.INTERNET"/>
-    <uses-permission android:name="android.permission.WAKE_LOCK"/>
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+
     <permission android:name="android.permission.MEDIA_CONTENT_CONTROL" />
 
 
@@ -14,7 +15,8 @@
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme">
+        android:theme="@style/AppTheme"
+        android:usesCleartextTraffic="true">
         <activity
             android:name=".ui.activity.HomeActivity"
             android:label="@string/app_name"
@@ -25,12 +27,25 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data
+                    android:scheme="http"
+                    android:host="djekalternativeradio-app.com"
+                    android:pathPattern="/radio" />
+            </intent-filter>
         </activity>
-        <activity android:name=".ui.activity.CopyToClipboardActivity"
+        <activity
+            android:name=".ui.activity.CopyToClipboardActivity"
             android:exported="false"
             android:icon="@drawable/ic_menu_copy"
             android:label="@string/copy_to_clipboard"
-            android:theme="@android:style/Theme.NoDisplay"/>
+            android:theme="@android:style/Theme.NoDisplay" />
+
         <service android:name=".common.StreamService">
             <intent-filter>
                 <action android:name="android.intent.action.MEDIA_BUTTON" />
@@ -46,8 +61,12 @@
             </intent-filter>
         </receiver>
 
-        <meta-data android:name="google_analytics_adid_collection_enabled" android:value="false" />
-        <meta-data android:name="firebase_analytics_collection_deactivated" android:value="true" />
+        <meta-data
+            android:name="google_analytics_adid_collection_enabled"
+            android:value="false" />
+        <meta-data
+            android:name="firebase_analytics_collection_deactivated"
+            android:value="true" />
     </application>
 
 </manifest>
