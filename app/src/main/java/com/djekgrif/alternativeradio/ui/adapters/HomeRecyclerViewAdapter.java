@@ -48,7 +48,7 @@ public class HomeRecyclerViewAdapter extends BaseRecyclerViewSpaceAdapter<HomeLi
         RecentlyItem recentlyItem = (RecentlyItem) dataList.get(position);
         RecentlyItemHolder recentlyItemHolder = (RecentlyItemHolder) holder;
         if(!TextUtils.isEmpty(recentlyItem.getImage())) {
-            imageLoader.loadDefault(recentlyItem.getImage(), recentlyItemHolder.image, R.drawable.ic_guitar);
+            imageLoader.loadDefault(recentlyItem.getImage(), recentlyItemHolder.image);
         } else {
             recentlyItemHolder.image.setImageResource(R.drawable.ic_guitar);
         }
