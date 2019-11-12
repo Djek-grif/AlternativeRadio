@@ -20,8 +20,6 @@ public class Channel implements Parcelable {
     private List<StreamData> streamUrls;
     @SerializedName("songInfoUrl")
     private String songInfoUrl;
-    @SerializedName("recentlyInfoUrl")
-    private String recentlyInfoUrl;
     @SerializedName("name")
     private String name;
 
@@ -61,14 +59,6 @@ public class Channel implements Parcelable {
         this.songInfoUrl = songInfoUrl;
     }
 
-    public String getRecentlyInfoUrl() {
-        return recentlyInfoUrl;
-    }
-
-    public void setRecentlyInfoUrl(String recentlyInfoUrl) {
-        this.recentlyInfoUrl = recentlyInfoUrl;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -94,7 +84,6 @@ public class Channel implements Parcelable {
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeList(this.streamUrls);
         dest.writeString(this.songInfoUrl);
-        dest.writeString(this.recentlyInfoUrl);
         dest.writeString(this.name);
     }
 
@@ -102,7 +91,6 @@ public class Channel implements Parcelable {
         this.streamUrls = new ArrayList<StreamData>();
         in.readList(this.streamUrls, StreamData.class.getClassLoader());
         this.songInfoUrl = in.readString();
-        this.recentlyInfoUrl = in.readString();
         this.name = in.readString();
     }
 

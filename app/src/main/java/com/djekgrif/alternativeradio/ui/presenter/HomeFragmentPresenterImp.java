@@ -33,12 +33,13 @@ import com.djekgrif.alternativeradio.network.model.StationData;
 import com.djekgrif.alternativeradio.ui.adapters.ItemSelectListener;
 import com.djekgrif.alternativeradio.ui.utils.ToastUlils;
 import com.djekgrif.alternativeradio.utils.DeviceUtils;
-import com.djekgrif.alternativeradio.utils.ListUtils;
 import com.djekgrif.alternativeradio.view.HomeFragmentView;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import rx.Observable;
@@ -233,7 +234,13 @@ public class HomeFragmentPresenterImp implements HomeFragmentPresenter {
 
     @Subscribe
     public void onUpdateStationsState(UpdateStationsStateEvent updateStationsState) {
-        homeFragmentView.updateStationList(ListUtils.filter(updateStationsState.stationDataList, StationData::isPublic));
+        List<StationData> filteredList = new ArrayList<>();
+        for(StationData data : updateStationsState.stationDataList) {
+            if(data.isPublic()) {
+                filteredList.add(data);
+            }
+        }
+        homeFragmentView.updateStationList(filteredList);
         homeFragmentView.setUpUI();
     }
 

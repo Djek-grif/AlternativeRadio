@@ -107,7 +107,7 @@ public class StreamDataUpdater {
     public void startSoundInfoUpdater() {
         configurationManager.updateConfigurationData(configurationData -> {
             infoUpdaterHandler.removeCallbacks(updateInfoRunnable);
-            if (currentChannel != null && (!TextUtils.isEmpty(currentChannel.getSongInfoUrl()) || !TextUtils.isEmpty(currentChannel.getRecentlyInfoUrl()))) {
+            if (currentChannel != null && (!TextUtils.isEmpty(currentChannel.getSongInfoUrl()))) {
                 infoUpdaterHandler.post(updateInfoRunnable);
             }
         });

@@ -6,13 +6,13 @@ apply plugin: 'com.android.application'
 apply plugin: 'com.google.gms.google-services'
 
 android {
-    compileSdkVersion 27
+    compileSdkVersion 29
     buildToolsVersion rootProject.buildToolsVersion
 
     defaultConfig {
         applicationId "com.djekgrif.radio"
         minSdkVersion 16
-        targetSdkVersion 26
+        targetSdkVersion 29
 
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 
