@@ -1,5 +1,7 @@
 package com.djekgrif.alternativeradio.di.modules;
 
+import android.app.Application;
+
 import com.djekgrif.alternativeradio.network.ApiService;
 import com.djekgrif.alternativeradio.network.ApiServiceImp;
 import com.djekgrif.alternativeradio.network.RadioInfoService;

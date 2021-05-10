@@ -1,7 +1,7 @@
 package com.djekgrif.alternativeradio.manager;
 
 import android.content.Context;
-import android.support.v7.app.AlertDialog;
+import androidx.appcompat.app.AlertDialog;
 
 import com.djekgrif.alternativeradio.R;
 

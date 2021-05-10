@@ -3,7 +3,7 @@ package com.djekgrif.alternativeradio.ui.presenter;
 import android.content.ComponentName;
 import android.os.Bundle;
 import android.os.RemoteException;
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 import android.support.v4.media.MediaBrowserCompat;
 import android.support.v4.media.session.MediaControllerCompat;
 import android.support.v4.media.session.PlaybackStateCompat;

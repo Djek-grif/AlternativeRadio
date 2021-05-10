@@ -2,9 +2,9 @@ package com.djekgrif.alternativeradio.ui.fragment;
 
 
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
-import android.support.v7.app.AppCompatDelegate;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.appcompat.app.AppCompatDelegate;
 
 /**
  * Created by djek-grif on 7/17/16.

@@ -6,6 +6,7 @@ import android.widget.ImageView;
 
 import com.djekgrif.alternativeradio.App;
 import com.djekgrif.alternativeradio.BuildConfig;
+import com.djekgrif.alternativeradio.common.Logger;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
 
@@ -55,8 +56,9 @@ public class PicassoImageLoader implements ImageLoader{
             }
 
             @Override
-            public void onBitmapFailed(Drawable errorDrawable) {
+            public void onBitmapFailed(Exception e, Drawable errorDrawable) {
                 listener.call(null);
+                Logger.e(e, "Error load image");
             }
 
             @Override

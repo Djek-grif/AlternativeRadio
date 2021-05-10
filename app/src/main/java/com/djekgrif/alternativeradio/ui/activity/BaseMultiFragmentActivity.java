@@ -2,7 +2,7 @@ package com.djekgrif.alternativeradio.ui.activity;
 
 import android.app.Fragment;
 import android.os.Bundle;
-import android.support.v4.app.FragmentTransaction;
+import androidx.fragment.app.FragmentTransaction;
 import android.text.TextUtils;
 
 import com.djekgrif.alternativeradio.R;

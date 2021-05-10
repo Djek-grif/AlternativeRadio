@@ -1,7 +1,7 @@
 package com.djekgrif.alternativeradio.ui.utils;
 
 import android.content.res.Resources;
-import android.support.annotation.DimenRes;
+import androidx.annotation.DimenRes;
 import android.util.TypedValue;
 
 import com.djekgrif.alternativeradio.App;

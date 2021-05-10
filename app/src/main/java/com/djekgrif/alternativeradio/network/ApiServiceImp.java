@@ -1,5 +1,7 @@
 package com.djekgrif.alternativeradio.network;
 
+import android.app.Application;
+
 /**
  * Created by djek-grif on 7/2/17.
  */

@@ -1,5 +1,6 @@
 package com.djekgrif.alternativeradio.network;
 
+import android.app.Application;
 import android.text.TextUtils;
 
 import com.djekgrif.alternativeradio.common.Logger;
@@ -8,6 +9,7 @@ import com.djekgrif.alternativeradio.network.model.CurrentTrackInfo;
 import com.djekgrif.alternativeradio.network.model.SongInfo;
 import com.djekgrif.alternativeradio.network.model.SearchInfoDetails;
 import com.djekgrif.alternativeradio.ui.utils.StringUtils;
+import com.google.firebase.FirebaseApp;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;

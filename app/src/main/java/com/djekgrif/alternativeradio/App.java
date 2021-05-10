@@ -6,8 +6,7 @@ import com.djekgrif.alternativeradio.common.Logger;
 import com.djekgrif.alternativeradio.di.components.DaggerRadioAppComponent;
 import com.djekgrif.alternativeradio.di.components.RadioAppComponent;
 import com.djekgrif.alternativeradio.di.modules.RadioAppModule;
-
-import net.danlew.android.joda.JodaTimeAndroid;
+import com.google.firebase.FirebaseApp;
 
 /**
  * Created by djek-grif on 5/25/16.
@@ -23,7 +22,6 @@ public class App extends Application {
         super.onCreate();
         instance = this;
         buildGraphAndInject();
-        JodaTimeAndroid.init(this);
         if(BuildConfig.DEBUG){
             Logger.setCurrentLevel(Logger.Level.DETAILS);
         }

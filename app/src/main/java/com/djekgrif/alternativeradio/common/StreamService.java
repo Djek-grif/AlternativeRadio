@@ -7,11 +7,12 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.ResultReceiver;
-import android.support.v4.media.session.MediaButtonReceiver;
+import androidx.media.session.MediaButtonReceiver;
 import android.support.v4.media.session.MediaSessionCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
 
 import com.djekgrif.alternativeradio.App;
+import com.djekgrif.alternativeradio.BuildConfig;
 import com.djekgrif.alternativeradio.common.events.ClickActionButtonEvent;
 import com.djekgrif.alternativeradio.common.events.StartPlayEvent;
 import com.djekgrif.alternativeradio.common.events.StopPlayEvent;
@@ -27,11 +28,11 @@ import com.djekgrif.alternativeradio.manager.Preferences;
 import com.djekgrif.alternativeradio.network.ApiService;
 import com.djekgrif.alternativeradio.network.model.ConfigurationData;
 import com.djekgrif.alternativeradio.network.model.CurrentTrackInfo;
-import com.djekgrif.alternativeradio.network.model.SearchInfoDetails;
 import com.djekgrif.alternativeradio.ui.model.HomeListItem;
 import com.google.android.exoplayer2.DefaultLoadControl;
 import com.google.android.exoplayer2.ExoPlaybackException;
 import com.google.android.exoplayer2.ExoPlayerFactory;
+import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory;
 import com.google.android.exoplayer2.extractor.ExtractorsFactory;
 import com.google.android.exoplayer2.source.ExtractorMediaSource;
@@ -134,8 +135,11 @@ public class StreamService extends BaseStreamService {
 
 
     private void initPlayer() {
-        TrackSelector trackSelector = new DefaultTrackSelector(new Handler());
-        player = ExoPlayerFactory.newSimpleInstance(getApplication(), trackSelector, new DefaultLoadControl());//new DefaultLoadControl(new DefaultAllocator(true, C.DEFAULT_BUFFER_SEGMENT_SIZE)));
+        TrackSelector trackSelector = new DefaultTrackSelector(getApplication());
+        player = new SimpleExoPlayer.Builder(getApplication())
+                .setTrackSelector(trackSelector)
+                .setLoadControl(new DefaultLoadControl())
+                .build();
         PlayerLogger eventLogger = new PlayerLogger() {
             @Override
             public void onPlayerError(ExoPlaybackException error) {
@@ -143,10 +147,10 @@ public class StreamService extends BaseStreamService {
                 stopPlay();
             }
         };
-        player.setAudioDebugListener(eventLogger);
-//        player.setVideoDebugListener(eventLogger);
-//        player.setId3Output(eventLogger);
-        player.addListener(eventLogger);
+        if(BuildConfig.DEBUG) {
+            player.addAnalyticsListener(eventLogger);
+            player.addListener(eventLogger);
+        }
     }
 
     private void initMediaSession() {
